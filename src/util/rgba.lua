@@ -148,12 +148,12 @@ return {
     };
     
     assemblies = {
-		--[[ getRed - Get the red value from a color
-			note:			Calling method:  hReturnedLH.getRed(color);
-			@color:			The color to obtain the red value from
-			
-			returns:		The red value of this 24-bits or 32-bits color
-		]]
+        --[[ getRed - Get the red value from a color
+            note:			Calling method:  hReturnedLH.getRed(color);
+            @color:			The color to obtain the red value from
+
+            returns:		The red value of this 24-bits or 32-bits color
+        ]]
         getRed = {
             assembly     = [=[;ASSEMBLY
                 USE32
@@ -171,13 +171,13 @@ return {
             ;ENDASSEMBLY]=];
         };
 		
-		--[[ setRed - Change the red value in a color
-			note:			Calling method:  hReturnedLH.setRed(color, value);
-			@color:			The color to change the value in
+        --[[ setRed - Change the red value in a color
+            note:			Calling method:  hReturnedLH.setRed(color, value);
+            @color:			The color to change the value in
             @value:         The new value
-			
-			returns:		The new color with the changed value
-		]]
+
+            returns:		The new color with the changed value
+        ]]
 		setRed = {
 			assembly	= [=[;ASSEMBLY
                 USE32
@@ -199,12 +199,12 @@ return {
 			;ENDASSEMBLY]=];
 		};
         
-		--[[ getGreen - Get the green value from a color
-			note:			Calling method:  hReturnedLH.getGreen(color);
-			@color:			The color to obtain the green value from
-			
-			returns:		The green value of this 24-bits or 32-bits color
-		]]
+        --[[ getGreen - Get the green value from a color
+            note:			Calling method:  hReturnedLH.getGreen(color);
+            @color:			The color to obtain the green value from
+
+            returns:		The green value of this 24-bits or 32-bits color
+        ]]
         getGreen = {
             assembly     = [=[;ASSEMBLY
                 USE32
@@ -223,13 +223,13 @@ return {
             ;ENDASSEMBLY]=];
         };
         
-		--[[ setGreen - Change the green value in a color
-			note:			Calling method:  hReturnedLH.setGreen(color, value);
-			@color:			The color to change the value in
+        --[[ setGreen - Change the green value in a color
+            note:			Calling method:  hReturnedLH.setGreen(color, value);
+            @color:			The color to change the value in
             @value:         The new value
-			
-			returns:		The new color with the changed value
-		]]
+
+            returns:		The new color with the changed value
+        ]]
 		setGreen = {
 			assembly	= [=[;ASSEMBLY
                 USE32
@@ -252,12 +252,12 @@ return {
 			;ENDASSEMBLY]=];
 		};
         
-		--[[ getBlue - Get the blue value from a color
-			note:			Calling method:  hReturnedLH.getBlue(color);
-			@color:			The color to obtain the blue value from
-			
-			returns:		The blue value of this 24-bits or 32-bits color
-		]]
+        --[[ getBlue - Get the blue value from a color
+            note:			Calling method:  hReturnedLH.getBlue(color);
+            @color:			The color to obtain the blue value from
+
+            returns:		The blue value of this 24-bits or 32-bits color
+        ]]
         getBlue = {
             assembly     = [=[;ASSEMBLY
                 USE32
@@ -275,14 +275,14 @@ return {
                 RETN
             ;ENDASSEMBLY]=];
         };
-        
-		--[[ setBlue - Change the blue value in a color
-			note:			Calling method:  hReturnedLH.setBlue(color, value);
-			@color:			The color to change the value in
+
+        --[[ setBlue - Change the blue value in a color
+            note:			Calling method:  hReturnedLH.setBlue(color, value);
+            @color:			The color to change the value in
             @value:         The new value
-			
-			returns:		The new color with the changed value
-		]]
+
+            returns:		The new color with the changed value
+        ]]
 		setBlue = {
 			assembly	= [=[;ASSEMBLY
                 USE32
@@ -304,13 +304,13 @@ return {
                 RETN
 			;ENDASSEMBLY]=];
 		};
-        
-		--[[ getAlpha - Get the alpha value from a color
-			note:			Calling method:  hReturnedLH.getAlpha(color);
-			@color:			The color to obtain the alpha value from
-			
-			returns:		The alpha value of this 24-bits or 32-bits color
-		]]
+
+        --[[ getAlpha - Get the alpha value from a color
+            note:			Calling method:  hReturnedLH.getAlpha(color);
+            @color:			The color to obtain the alpha value from
+
+            returns:		The alpha value of this 24-bits or 32-bits color
+        ]]
         getAlpha = {
             assembly     = [=[;ASSEMBLY
                 USE32
@@ -329,13 +329,13 @@ return {
             ;ENDASSEMBLY]=];
         };
         
-		--[[ setAlpha - Change the alpha value in a color
-			note:			Calling method:  hReturnedLH.setAlpha(color, value);
-			@color:			The color to change the value in
+        --[[ setAlpha - Change the alpha value in a color
+            note:			Calling method:  hReturnedLH.setAlpha(color, value);
+            @color:			The color to change the value in
             @value:         The new value
-			
-			returns:		The new color with the changed value
-		]]
+
+            returns:		The new color with the changed value
+        ]]
 		setAlpha = {
 			assembly	= [=[;ASSEMBLY
                 USE32
@@ -358,15 +358,15 @@ return {
 			;ENDASSEMBLY]=];
 		};
         
-		--[[ makeRGBA - Calculate a 32-bits RGBA color
-			note:			Calling method:  hReturnedLH.makeRGBA(red, green, blue, alpha);
-			@red:			The red value for this color
-			@green:			The green value for this color
-			@blue:			The blue value for this color
-			@alpha:			The alpha value for this color
-			
-			returns:		The resulting RGBA color
-		]]
+        --[[ makeRGBA - Calculate a 32-bits RGBA color
+            note:			Calling method:  hReturnedLH.makeRGBA(red, green, blue, alpha);
+            @red:			The red value for this color
+            @green:			The green value for this color
+            @blue:			The blue value for this color
+            @alpha:			The alpha value for this color
+
+            returns:		The resulting RGBA color
+        ]]
         makeRGBA = {
             assembly     = [=[;ASSEMBLY
                 USE32
@@ -410,14 +410,14 @@ return {
             ;ENDASSEMBLY]=];
         };
         
-		--[[ makeRGB - Calculate a 24-bits RGB color
-			note:			Calling method:  hReturnedLH.makeRGB(red, green, blue);
-			@red:			The red value for this color
-			@green:			The green value for this color
-			@blue:			The blue value for this color
-			
-			returns:		The resulting RGB color
-		]]
+        --[[ makeRGB - Calculate a 24-bits RGB color
+            note:			Calling method:  hReturnedLH.makeRGB(red, green, blue);
+            @red:			The red value for this color
+            @green:			The green value for this color
+            @blue:			The blue value for this color
+
+            returns:		The resulting RGB color
+        ]]
         makeRGB = {
             assembly     = [=[;ASSEMBLY
                 ; Exact the same as makeRGBA, but disregards the alpha channel in a color.
