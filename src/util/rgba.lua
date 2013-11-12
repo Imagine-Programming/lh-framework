@@ -85,14 +85,14 @@ return {
     };
     
     functions = {
-		--[[ ColorPicker - Display a color picker and obtain the selected color.
-			note:			Calling method:  hReturnedLH:ColorPicker(0 [, Application.GetWndHandle()]);
-			@hLH:			Handle to LH module, when called as method, argument is automatically provided.
-			@dwInitColor:	Preselect a color in the dialog
-			@hWndParent:	The parent window handle, optional. Defaults to the current DialogEx or AMS Window.
-			
-			returns:		The selected color, or -1.
-		]]
+        --[[ ColorPicker - Display a color picker and obtain the selected color.
+            note:			Calling method:  hReturnedLH:ColorPicker(0 [, Application.GetWndHandle()]);
+            @hLH:			Handle to LH module, when called as method, argument is automatically provided.
+            @dwInitColor:	Preselect a color in the dialog
+            @hWndParent:	The parent window handle, optional. Defaults to the current DialogEx or AMS Window.
+
+            returns:		The selected color, or -1.
+        ]]
         ColorPicker = function(hLH, dwInitColor, hWndParent)
             if(type(hLH) ~= "table")then error("ColoPicker: Argument #1: Please make sure this argument is an LH handle, by calling it as hLH:ColorPicker()!", 2);end;
             if(type(dwInitColor) ~= "number")then
