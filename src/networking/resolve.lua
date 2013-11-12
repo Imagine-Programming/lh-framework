@@ -7,6 +7,8 @@
     Date:               06-11-2013
     Version:            1.0.0.0
     Remarks:            Requires MemoryEx and initialization of WSA (WSAStartup)
+	Description:		An LH module that resolves hostnames and IP addresses to 
+						a list of aliases, addresses and the original hostname.
 
 	GIT version
 	
