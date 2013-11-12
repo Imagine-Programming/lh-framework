@@ -7,32 +7,32 @@
     Date:               12-11-2013
     Version:            1.0.0.0
     Remarks:            Requires MemoryEx
-	Description:		An LH module for color calculations and a color picker (Windows)
+    Description:		An LH module for color calculations and a color picker (Windows)
 
-	GIT version
+    GIT version
 	
-	License:			MIT
-	[=[
-		Copyright (c) 2013 Imagine Programming, Bas Groothedde
+    License:			MIT
+    [=[
+        Copyright (c) 2013 Imagine Programming, Bas Groothedde
 
-		Permission is hereby granted, free of charge, to any person obtaining a copy
-		of this software and associated documentation files (the "Software"), to deal
-		in the Software without restriction, including without limitation the rights
-		to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-		copies of the Software, and to permit persons to whom the Software is
-		furnished to do so, subject to the following conditions:
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
 
-		The above copyright notice and this permission notice shall be included in
-		all copies or substantial portions of the Software.
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
 
-		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-		IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-		FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-		AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-		THE SOFTWARE.
-	]=]
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+    ]=]
 ]]
 
 -- Load comdlg32 for the Color Picker
@@ -170,6 +170,34 @@ return {
                 RETN
             ;ENDASSEMBLY]=];
         };
+		
+		--[[ setRed - Change the red value in a color
+			note:			Calling method:  hReturnedLH.setRed(color, value);
+			@color:			The color to change the value in
+            @value:         The new value
+			
+			returns:		The new color with the changed value
+		]]
+		setRed = {
+			assembly	= [=[;ASSEMBLY
+                USE32
+                ORG     100h                          ; Code base
+                XOR     EAX,        EAX               ; Clear EAX
+                
+                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
+                MOV     EBP,        ESP               ; Move ESP to EBP.
+                
+                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                AND     EAX,        0xFFFFFF00        ; Remove the previous value
+				
+				MOV		ECX,		[EBP + 12]        ; Move the new value to ECX
+				AND     ECX,        0xFF              ; Enforce boundaries for value
+				OR      EAX,        ECX               ; Add value to original color
+                
+                POP     EBP
+                RETN
+			;ENDASSEMBLY]=];
+		};
         
 		--[[ getGreen - Get the green value from a color
 			note:			Calling method:  hReturnedLH.getGreen(color);
@@ -195,6 +223,35 @@ return {
             ;ENDASSEMBLY]=];
         };
         
+		--[[ setGreen - Change the green value in a color
+			note:			Calling method:  hReturnedLH.setGreen(color, value);
+			@color:			The color to change the value in
+            @value:         The new value
+			
+			returns:		The new color with the changed value
+		]]
+		setGreen = {
+			assembly	= [=[;ASSEMBLY
+                USE32
+                ORG     100h                          ; Code base
+                XOR     EAX,        EAX               ; Clear EAX
+                
+                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
+                MOV     EBP,        ESP               ; Move ESP to EBP.
+                
+                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                AND     EAX,        0xFFFF00FF        ; Remove the previous value
+				
+				MOV		ECX,		[EBP + 12]        ; Move the new value to ECX
+				AND     ECX,        0xFF              ; Enforce boundaries for value
+                SHL     ECX,        8                 ; Move the new value 8 bits to the left
+				OR      EAX,        ECX               ; Add value to original color
+                
+                POP     EBP
+                RETN
+			;ENDASSEMBLY]=];
+		};
+        
 		--[[ getBlue - Get the blue value from a color
 			note:			Calling method:  hReturnedLH.getBlue(color);
 			@color:			The color to obtain the blue value from
@@ -219,6 +276,35 @@ return {
             ;ENDASSEMBLY]=];
         };
         
+		--[[ setBlue - Change the blue value in a color
+			note:			Calling method:  hReturnedLH.setBlue(color, value);
+			@color:			The color to change the value in
+            @value:         The new value
+			
+			returns:		The new color with the changed value
+		]]
+		setBlue = {
+			assembly	= [=[;ASSEMBLY
+                USE32
+                ORG     100h                          ; Code base
+                XOR     EAX,        EAX               ; Clear EAX
+                
+                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
+                MOV     EBP,        ESP               ; Move ESP to EBP.
+                
+                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                AND     EAX,        0xFF00FFFF        ; Remove the previous value
+				
+				MOV		ECX,		[EBP + 12]        ; Move the new value to ECX
+				AND     ECX,        0xFF              ; Enforce boundaries for value
+                SHL     ECX,        16                ; Move the new value 16 bits to the left
+				OR      EAX,        ECX               ; Add value to original color
+                
+                POP     EBP
+                RETN
+			;ENDASSEMBLY]=];
+		};
+        
 		--[[ getAlpha - Get the alpha value from a color
 			note:			Calling method:  hReturnedLH.getAlpha(color);
 			@color:			The color to obtain the alpha value from
@@ -242,6 +328,35 @@ return {
                 RETN
             ;ENDASSEMBLY]=];
         };
+        
+		--[[ setAlpha - Change the alpha value in a color
+			note:			Calling method:  hReturnedLH.setAlpha(color, value);
+			@color:			The color to change the value in
+            @value:         The new value
+			
+			returns:		The new color with the changed value
+		]]
+		setAlpha = {
+			assembly	= [=[;ASSEMBLY
+                USE32
+                ORG     100h                          ; Code base
+                XOR     EAX,        EAX               ; Clear EAX
+                
+                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
+                MOV     EBP,        ESP               ; Move ESP to EBP.
+                
+                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                AND     EAX,        0x00FFFFFF        ; Remove the previous value
+				
+				MOV		ECX,		[EBP + 12]        ; Move the new value to ECX
+				AND     ECX,        0xFF              ; Enforce boundaries for value
+                SHL     ECX,        24                ; Move the new value 16 bits to the left
+				OR      EAX,        ECX               ; Add value to original color
+                
+                POP     EBP
+                RETN
+			;ENDASSEMBLY]=];
+		};
         
 		--[[ makeRGBA - Calculate a 32-bits RGBA color
 			note:			Calling method:  hReturnedLH.makeRGBA(red, green, blue, alpha);
