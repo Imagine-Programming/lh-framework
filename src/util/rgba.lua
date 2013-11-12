@@ -455,5 +455,28 @@ return {
             ;ENDASSEMBLY]=];
         };
         
+        --[[ negate - Negate a color
+            note:			Calling method:  hReturnedLH.negate(color);
+            @color:			The color to get a negative value of
+
+            returns:		The new negated color
+        ]]
+        negate = {
+            assembly     = [=[;ASSEMBLY
+                USE32
+                ORG     100h                          ; Code base
+                XOR     EAX,        EAX               ; Clear EAX
+                
+                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
+                MOV     EBP,        ESP               ; Move ESP to EBP.
+                
+                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                XOR     EAX,        0xFFFFFF          ; Negate the RGB values and leave the Alpha intact, if present.
+                
+                POP     EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
     };
 }
