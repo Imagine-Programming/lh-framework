@@ -38,6 +38,18 @@
 -- Load comdlg32 for the Color Picker
 local comdlg32 = Library.Load("comdlg32.dll");
 
+local function rset(s,l,c)
+    while(s:len() < l)do
+        s = (c..s);
+    end
+    
+    return s;
+end;
+
+local function ptonumber(n)
+    return (tonumber(n) or 0);
+end;
+
 return {
     info = {
         name        = "rgba.lh";
@@ -144,6 +156,50 @@ return {
             end
             
             return result;
+        end;
+        
+        colorFromHex = function(hLH, hex)
+            if(hex:len() == 4)then -- #0A3 RGB color with 3 hex digits
+                local r = hex:sub(2, 2);
+                local g = hex:sub(3, 3);
+                local b = hex:sub(4, 4);
+                
+                return hLH.makeRGB(ptonumber("0x"..r..r), ptonumber("0x"..g..g), ptonumber("0x"..b..b));
+            elseif(hex:len() == 5)then -- #0A3F RGBA color with 4 hex digits
+                local r = hex:sub(2, 2);
+                local g = hex:sub(3, 3);
+                local b = hex:sub(4, 4);
+                local a = hex:sub(5, 5);
+                
+                return hLH.makeRGBA(ptonumber("0x"..r..r), ptonumber("0x"..g..g), ptonumber("0x"..b..b), ptonumber("0x"..a..a));
+            elseif(hex:len() == 7)then -- #BE00F3 RGB color with 6 hex digits
+                local r = hex:sub(2, 3);
+                local g = hex:sub(4, 5);
+                local b = hex:sub(6, 7);
+                
+                return hLH.makeRGB(ptonumber("0x"..r), ptonumber("0x"..g), ptonumber("0x"..b));
+            elseif(hex:len() == 9)then -- #BE00F3AA RGBA color with 8 hex digits
+                local r = hex:sub(2, 3);
+                local g = hex:sub(4, 5);
+                local b = hex:sub(6, 7);
+                local a = hex:sub(8, 9);
+                
+                return hLH.makeRGBA(ptonumber("0x"..r), ptonumber("0x"..g), ptonumber("0x"..b), ptonumber("0x"..a));
+            end
+        end;
+        
+        hexFromColor = function(hLH, color, alpha)
+            local format = string.format;
+            
+            local hex = "#";
+            hex = hex..rset(format("%x", hLH.getRed(color)), 2, "0");
+            hex = hex..rset(format("%x", hLH.getGreen(color)), 2, "0");
+            hex = hex..rset(format("%x", hLH.getBlue(color)), 2, "0");
+            if(alpha)then
+                hex = hex..rset(format("%x", hLH.getAlpha(color)), 2, "0");
+            end
+            
+            return hex;
         end;
     };
     
