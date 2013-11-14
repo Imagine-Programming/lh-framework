@@ -146,7 +146,7 @@ local lh = {
             end
             
             if(ctx ~= 0)then
-                math.randomseed(seed + os.time());
+                math.randomseed(seed + (os.clock() * 1000));
                 local seed = isaacdata:New();
                 if(seed)then
                     for i = 0, (RANDSIZ - 1) do
