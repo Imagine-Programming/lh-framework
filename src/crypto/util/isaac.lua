@@ -231,9 +231,16 @@ local lh = {
                 end
                 
                 local t = {};
+                local n = 0;
                 for i = 1, c do
-                    local r = ((isaac.isaac_long(ctx) % RAND_MAX) / RAND_MAX);
+                    local r = ((hCTX.randrsl.data[n] % RAND_MAX) / RAND_MAX);
                     t[#t + 1] = minmax(r, ...);
+                    
+                    n = (n + 1);
+                    if(n == RANDSIZ)then
+                        isaac.isaac_step(ctx);
+                        n = 0;
+                    end
                 end
                 
                 return t;
