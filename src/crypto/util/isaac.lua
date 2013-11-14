@@ -7,11 +7,11 @@
     Date:               13-11-2013
     Version:            1.0.0.0
     Remarks:            Requires MemoryEx
-    Description:		An LH module for cryptographic pseudo-random number and data generation using ISAAC.
+    Description:        An LH module for cryptographic pseudo-random number and data generation using ISAAC.
 
     GIT version
-	
-    License:			MIT
+    
+    License:            MIT
     [=[
         Copyright (c) 2013 Imagine Programming, Bas Groothedde
 
@@ -100,10 +100,10 @@ local lh = {
     
     functions = {
         --[[ init - initialize the context for the ISAAC cipher
-            note:			Calling method:  hReturnedLH:init()
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:           Calling method:  hReturnedLH:init()
+            @hLH:           The handle to the LH module, automatically provided when called as method.
 
-            returns:		boolean true on success, false on failure.
+            returns:        boolean true on success, false on failure.
         ]]
         init = function(hLH)
             if(not isaac)then
@@ -122,10 +122,10 @@ local lh = {
         end;
         
         --[[ step - step the ISAAC cipher, generating a new set of random bits.
-            note:			Calling method:  hReturnedLH:step()
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:           Calling method:  hReturnedLH:step()
+            @hLH:           The handle to the LH module, automatically provided when called as method.
 
-            returns:		nothing.
+            returns:        nothing.
         ]]
         step = function(hLH)
             if(ctx ~= 0)then
@@ -134,11 +134,11 @@ local lh = {
         end;
         
         --[[ seed - seed the ISAAC context with a number, this number will seed a regular random generator which will produce random seeds for ISAAC.
-            note:			Calling method:  hReturnedLH:seed(seed)
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:            Calling method:  hReturnedLH:seed(seed)
+            @hLH:            The handle to the LH module, automatically provided when called as method.
             @seed:          A number to seed ISAAC with.
 
-            returns:		nothing.
+            returns:        nothing.
         ]]
         seed = function(hLH, seed)
             if(type(seed) ~= "number")then
@@ -160,11 +160,11 @@ local lh = {
         end;
         
         --[[ seedData - seed the ISAAC context with data, the data has to be RANDSIZ of length (256 bytes)
-            note:			Calling method:  hReturnedLH:seedData(ptr)
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:            Calling method:  hReturnedLH:seedData(ptr)
+            @hLH:            The handle to the LH module, automatically provided when called as method.
             @data:          A buffer with 256 bytes of data to seed ISAAC with.
 
-            returns:		nothing.
+            returns:        nothing.
         ]]
         seedData = function(hLH, ptr)
             if(type(ptr) ~= "number")then
@@ -177,10 +177,10 @@ local lh = {
         end;
         
         --[[ dword - Get the next random dword
-            note:			Calling method:  hReturnedLH:dword()
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:            Calling method:  hReturnedLH:dword()
+            @hLH:            The handle to the LH module, automatically provided when called as method.
 
-            returns:		a new random dword.
+            returns:        a new random dword.
         ]]
         dword = function(hLH)
             if(ctx ~= 0)then
@@ -189,10 +189,10 @@ local lh = {
         end;
         
         --[[ udword - Get the next random unsigned dword
-            note:			Calling method:  hReturnedLH:udword()
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:            Calling method:  hReturnedLH:udword()
+            @hLH:            The handle to the LH module, automatically provided when called as method.
 
-            returns:		a new random unsigned dword.
+            returns:        a new random unsigned dword.
         ]]
         udword = function(hLH)
             if(ctx ~= 0)then
@@ -201,12 +201,12 @@ local lh = {
         end;
         
         --[[ random - Acts like Lua's math.random, but using ISAAC
-            note:			Calling method:  hReturnedLH:random([min/max [, max ] ])
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:            Calling method:  hReturnedLH:random([min/max [, max ] ])
+            @hLH:            The handle to the LH module, automatically provided when called as method.
             @min:           The minimum value
             @max:           The maximum value
 
-            returns:		a new random number.
+            returns:        a new random number.
         ]]
         random = function(hLH, ...)
             if(ctx ~= 0)then
@@ -216,13 +216,13 @@ local lh = {
         end;
         
         --[[ table - Generates a table filled with random numbers
-            note:			Calling method:  hReturnedLH:table(c, [min/max [, max ] ])
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:            Calling method:  hReturnedLH:table(c, [min/max [, max ] ])
+            @hLH:            The handle to the LH module, automatically provided when called as method.
             @c:             The size of the table
             @min:           The minimum value
             @max:           The maximum value
 
-            returns:		a table with random values
+            returns:        a table with random values
         ]]
         table = function(hLH, c, ...)
             if(ctx ~= 0)then
@@ -248,13 +248,53 @@ local lh = {
             end
         end;
         
+        --[[ matrix - Generates a matrix filled with random numbers
+            note:           Calling method:  hReturnedLH:matrix(rows, columns, [min/max [, max ] ])
+            @hLH:           The handle to the LH module, automatically provided when called as method.
+            @rows:          The number of rows in the matrix
+            @columns:       The number of columns in the matrix
+            @min:           The minimum value
+            @max:           The maximum value
+
+            returns:        a matrix (table) with random values
+        ]]
+        matrix = function(hLH, rows, columns, ...)
+            if(ctx ~= 0)then
+                if(type(rows) ~= "number")then
+                    error(("isaac::matrix: argument #2 expects a number, got '%s'"):format(type(rows)), 2);
+                end
+                if(type(columns) ~= "number")then
+                    error(("isaac::matrix: argument #3 expects a number, got '%s'"):format(type(columns)), 2);
+                end
+            end
+            
+            local t = {};
+            local n = 0;
+            for y = 1, rows do
+                t[y] = {};
+                for x = 1, columns do
+                    local r = ((hCTX.randrsl.data[n] % RAND_MAX) / RAND_MAX);
+                    t[y][#t[y] + 1] = minmax(r, ...);
+                    
+                    n = (n + 1);
+                    if(n == RANDSIZ)then
+                        isaac.isaac_step(ctx);
+                        n = 0;
+                    end
+                end
+            end
+        
+            isaac.isaac_step(ctx);
+            return t;
+        end;
+        
         --[[ buff - Fills a buffer with random data
-            note:			Calling method:  hReturnedLH:buff(buffer, length)
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:            Calling method:  hReturnedLH:buff(buffer, length)
+            @hLH:            The handle to the LH module, automatically provided when called as method.
             @buffer:        A pointer to a buffer which will hold the random data.
             @length:        The length / size of the buffer that will be filled.
 
-            returns:		nothing.
+            returns:        nothing.
         ]]
         buff = function(hLH, buffer, length)
             if(ctx ~= 0)then
@@ -270,10 +310,10 @@ local lh = {
         end;
         
         --[[ close - uninitialize the context for the ISAAC cipher
-            note:			Calling method:  hReturnedLH:close()
-            @hLH:			The handle to the LH module, automatically provided when called as method.
+            note:            Calling method:  hReturnedLH:close()
+            @hLH:            The handle to the LH module, automatically provided when called as method.
 
-            returns:		nothing.
+            returns:        nothing.
         ]]
         close = function(hLH)
             if(ctx ~= 0)then
