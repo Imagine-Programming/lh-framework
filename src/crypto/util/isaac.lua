@@ -243,6 +243,7 @@ local lh = {
                     end
                 end
                 
+                isaac.isaac_step(ctx);
                 return t;
             end
         end;
