@@ -43,9 +43,11 @@ local ctx       = 0;
 local hCTX      = false;
 local RANDSIZ   = 256;
 local RAND_MAX  = 0x7FFF;
+
 local isaacdata = MemoryEx.DefineStruct{
     UDWORD      ("data", RANDSIZ);
 };
+
 local isaacctx  = MemoryEx.DefineStruct{
     UDWORD      "randcnt";
     isaacdata   "randrsl";
@@ -55,6 +57,13 @@ local isaacctx  = MemoryEx.DefineStruct{
     UDWORD      "randc";
 };
 
+--[[ minmax - takes a random number and returns it as a number with boundaries, or simply the number itself.
+    @r:         the random number that was generated using ISAAC
+    @min / max: when only 2 arguments provided, this is the maximum boundary. when 3 are provided, this is the minimum boundary.
+    @max:       maximum boundary (when 3 arguments are provided)
+    
+    returns:    the random number
+]]
 local minmax = function(r, ...)
     local argv = {...};
     local argc = #argv;
@@ -110,8 +119,11 @@ local lh = {
                 return false, "Something went wrong in random.lh, ISAAC was not loaded!";
             end
             
+            -- initialize ISAAC from the b64 library.
             ctx = isaac.isaac_init();
             if(ctx ~= 0)then
+                -- assign a structure to the pointer that is returned by isaac_init, 
+                -- this is the context buffer for the cipher. 
                 hCTX = MemoryEx.AssignStruct(ctx, isaacctx);
                 if(hCTX)then
                     return true;
@@ -129,13 +141,14 @@ local lh = {
         ]]
         step = function(hLH)
             if(ctx ~= 0)then
+                -- invoke isaac_step to generate a new set of random bits.
                 isaac.isaac_step(ctx);
             end
         end;
         
         --[[ seed - seed the ISAAC context with a number, this number will seed a regular random generator which will produce random seeds for ISAAC.
-            note:            Calling method:  hReturnedLH:seed(seed)
-            @hLH:            The handle to the LH module, automatically provided when called as method.
+            note:           Calling method:  hReturnedLH:seed(seed)
+            @hLH:           The handle to the LH module, automatically provided when called as method.
             @seed:          A number to seed ISAAC with.
 
             returns:        nothing.
@@ -146,22 +159,29 @@ local lh = {
             end
             
             if(ctx ~= 0)then
+                -- seed the regular random generator which will seed ISAAC
                 math.randomseed(seed + (os.clock() * 1000));
+                
+                -- construct a buffer for the randrsl buffer in the ISAAC ctx
                 local seed = isaacdata:New();
                 if(seed)then
+                    -- fill the buffer with random numbers
                     for i = 0, (RANDSIZ - 1) do
                         seed.data[i] = math.random(0, 0xFFFF);
                     end
                     
+                    -- seed ISAAC with the random data
                     isaac.isaac_seed(ctx, seed:GetPointer());
+                    
+                    -- free the temporary buffer
                     seed:Free();
                 end
             end 
         end;
         
-        --[[ seedData - seed the ISAAC context with data, the data has to be RANDSIZ of length (256 bytes)
-            note:            Calling method:  hReturnedLH:seedData(ptr)
-            @hLH:            The handle to the LH module, automatically provided when called as method.
+        --[[ seedData - seed the ISAAC context with data, the data has to be RANDSIZ of length (256 dwords)
+            note:           Calling method:  hReturnedLH:seedData(ptr)
+            @hLH:           The handle to the LH module, automatically provided when called as method.
             @data:          A buffer with 256 bytes of data to seed ISAAC with.
 
             returns:        nothing.
@@ -172,6 +192,7 @@ local lh = {
             end
             
             if(ctx ~= 0)then
+                -- seed ISAAC using the buffer of 256 * 4
                 isaac.isaac_seed(ctx, ptr);
             end 
         end;
