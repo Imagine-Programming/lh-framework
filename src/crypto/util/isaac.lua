@@ -210,7 +210,7 @@ local lh = {
         ]]
         random = function(hLH, ...)
             if(ctx ~= 0)then
-                local r = ((hLH:dword() % RAND_MAX) / RAND_MAX);
+                local r = ((isaac.isaac_long(ctx) % RAND_MAX) / RAND_MAX);
                 return minmax(r, ...);
             end 
         end;
@@ -232,7 +232,7 @@ local lh = {
                 
                 local t = {};
                 for i = 1, c do
-                    local r = ((hLH:dword() % RAND_MAX) / RAND_MAX);
+                    local r = ((isaac.isaac_long(ctx) % RAND_MAX) / RAND_MAX);
                     t[#t + 1] = minmax(r, ...);
                 end
                 
