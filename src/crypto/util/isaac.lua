@@ -95,7 +95,7 @@ local lh = {
         description = "LH and Lua implementations of ISAAC.";
         author      = "Imagine Programming <Bas Groothedde>";
         contact     = "contact@imagine-programming.com";
-		version     = "1,0,0,0";
+        version     = "1,0,0,0";
     };
     
     functions = {
