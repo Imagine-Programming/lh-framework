@@ -21,15 +21,15 @@ Networking
 
 IMXLH Version
 -------------
-This code requires **[Imagine MemoryEx LH Compiler 1.2] [1]** or any version greater than that.
+This code requires **[Imagine MemoryEx LH Compiler 1.2] [1]** or any version greater than that.  
 Aside from that, **[MemoryEx 2.2] [2]** or greater is required to be able to load the produced LH modules.
 
 Compile
 -------
-Compilation is easy, just run build.bat. When you want to add more modules to this framework,
+Compilation is easy, just run build.bat. When you want to add more modules to this framework,  
 simply add each source to the makefile.lhm and make sure they build in build/lh-framework/lh/*.
 
-If you don't do this, the updatemain tool will not generate an index of those modules and the
+If you don't do this, the updatemain tool will not generate an index of those modules and the  
 CRC32 fingerprint required in main.lh will be lost.
 
 
