@@ -39,7 +39,10 @@
 ]]
 
 
-local root = _SourceFolder.."\\".."AutoPlay\\Scripts\\lh\\";
+local root = "";
+if(type(Application) == "table")then
+    root = _SourceFolder.."\\".."AutoPlay\\Scripts\\lh\\";
+end
 local crctab = {
     -- The crc32 table for each module will be automatically 
     -- inserted here by the pb tool 'updatemain' (updatemain.pb)
