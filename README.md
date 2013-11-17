@@ -18,3 +18,15 @@ Utilities
 Networking
 ----------
 * networking.resolve (Resolve hostnames and IP addresses, both IPv4 and IPv6 supported)
+
+IMXLH Version
+-------------
+This code requires **Imagine MemoryEx LH Compiler 1.2** or any version greater than that.
+
+Compile
+-------
+Compilation is easy, just run build.bat. When you want to add more modules to this framework,
+simply add each source to the makefile.lhm and make sure they build in build/lh-framework/lh/*.
+
+If you don't do this, the updatemain tool will not generate an index of those modules and the
+CRC32 fingerprint required in main.lh will be lost.
