@@ -21,7 +21,7 @@ Networking
 
 IMXLH Version
 -------------
-This code requires **Imagine MemoryEx LH Compiler 1.2** or any version greater than that.
+This code requires **[Imagine MemoryEx LH Compiler 1.2] [1]** or any version greater than that.
 
 Compile
 -------
@@ -30,3 +30,7 @@ simply add each source to the makefile.lhm and make sure they build in build/lh-
 
 If you don't do this, the updatemain tool will not generate an index of those modules and the
 CRC32 fingerprint required in main.lh will be lost.
+
+
+
+  [1]: http://www.memoryex.net/imxlh.html        "IMXLH"
