@@ -81,7 +81,7 @@ return {
         obfuscateMemoryBuffer = {
             returnType   = MEMEX_RETURNTYPE_LONG;
             assembly     = [=[;ASSEMBLY
-                include 'asm/macro.inc'
+                include '%incdir%/macro.inc'
                 
                 init32
                 pushArguments32 ; Arguments in EBP register - push ebp - mov ebp, esp

@@ -118,7 +118,7 @@ return {
         CRC32 = {
             dependencies = {}; -- No dependencies in this one.
             assembly = [=[;ASSEMBLY
-                include 'asm/macro.inc'
+                include '%incdir%/macro.inc'
                 
                 init32
                 pushArguments32 ; Arguments in EBP register - push ebp - mov ebp, esp
@@ -196,7 +196,7 @@ return {
 			-- CRC32 table buffer.
             dependencies = {}; -- No dependencies in this one.
             assembly = [=[;ASSEMBLY
-                include 'asm/macro.inc'
+                include '%incdir%/macro.inc'
                 
                 init32
                 pushArguments32 ; Arguments in EBP register - push ebp - mov ebp, esp
