@@ -53,6 +53,7 @@ Procedure.i outsize(insize)
 EndProcedure
 
 Procedure.s bin2base64(szFile.s)
+  szFile = ReplaceString(szFile, "/", "\")
   Protected result.s = ""
   Protected hFile    = ReadFile(#PB_Any, szFile)
   If(hFile)
@@ -145,10 +146,11 @@ EndIf
 
 ; IDE Options = PureBasic 5.20 LTS (Windows - x86)
 ; ExecutableFormat = Console
-; CursorPosition = 7
+; CursorPosition = 55
+; FirstLine = 28
 ; Folding = --
 ; EnableXP
-; Executable = b2b64.exe
+; Executable = ..\..\build\tools\updatemain.exe
 ; CompileSourceDirectory
-; EnableCompileCount = 14
-; EnableBuildCount = 1
+; EnableCompileCount = 16
+; EnableBuildCount = 3

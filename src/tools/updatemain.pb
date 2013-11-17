@@ -89,6 +89,8 @@ Macro error(m)
 EndMacro
 
 Procedure crcTableToFile(template.s, output.s, Map crc32_table.i())
+  template = ReplaceString(template, "/", "\")
+  output   = ReplaceString(output, "/", "\")
   If(FileSize(template) < 0)
     error("template file not found")
   EndIf 
@@ -107,6 +109,7 @@ Procedure crcTableToFile(template.s, output.s, Map crc32_table.i())
       
       szTemplate = ReplaceString(szTemplate, "--[[%crc_table%]]", szLines)
       WriteData(hOutput, @szTemplate, StringByteLength(szTemplate))
+      PrintN("updatemain: main source written")
       CloseFile(hOutput)
     Else
       CloseFile(hTemplate)
@@ -145,11 +148,13 @@ EndSelect
 
 CloseConsole()
 End 
-; IDE Options = PureBasic 5.20 beta 2 (Windows - x86)
+; IDE Options = PureBasic 5.20 LTS (Windows - x86)
 ; ExecutableFormat = Console
-; CursorPosition = 146
-; FirstLine = 114
+; CursorPosition = 111
+; FirstLine = 86
 ; Folding = --
 ; EnableXP
-; Executable = ..\updatemain.exe
+; Executable = ..\..\build\tools\updatemain.exe
 ; CompileSourceDirectory
+; EnableCompileCount = 3
+; EnableBuildCount = 3
