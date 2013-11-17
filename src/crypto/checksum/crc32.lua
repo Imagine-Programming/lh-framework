@@ -7,34 +7,34 @@
     Date:               12-11-2013
     Version:            1.0.0.0
     Remarks:            Requires MemoryEx
-	Description:		An LH module that allows you to calculate CRC32 checksums on data. One method
-						uses a static crc32 table (by referencing to a label) and the second method
-						allows the programmer to specify a crc32 table themselves. 
+    Description:        An LH module that allows you to calculate CRC32 checksums on data. One method
+                        uses a static crc32 table (by referencing to a label) and the second method
+                        allows the programmer to specify a crc32 table themselves. 
 
-	GIT version
-	
-	License:			MIT
-	[=[
-		Copyright (c) 2013 Imagine Programming, Bas Groothedde
+    GIT version
+    
+    License:            MIT
+    [=[
+        Copyright (c) 2013 Imagine Programming, Bas Groothedde
 
-		Permission is hereby granted, free of charge, to any person obtaining a copy
-		of this software and associated documentation files (the "Software"), to deal
-		in the Software without restriction, including without limitation the rights
-		to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-		copies of the Software, and to permit persons to whom the Software is
-		furnished to do so, subject to the following conditions:
+        Permission is hereby granted, free of charge, to any person obtaining a copy
+        of this software and associated documentation files (the "Software"), to deal
+        in the Software without restriction, including without limitation the rights
+        to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+        copies of the Software, and to permit persons to whom the Software is
+        furnished to do so, subject to the following conditions:
 
-		The above copyright notice and this permission notice shall be included in
-		all copies or substantial portions of the Software.
+        The above copyright notice and this permission notice shall be included in
+        all copies or substantial portions of the Software.
 
-		THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-		IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-		FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-		AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-		LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-		OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-		THE SOFTWARE.
-	]=]
+        THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+        IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+        FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+        AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+        LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+        OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+        THE SOFTWARE.
+    ]=]
 ]]
 
 return {
@@ -47,14 +47,14 @@ return {
     }; 
 
     functions = {
-		--[[ fileCRC32
-			note: 			in AMS, call like hReturnedLH:fileCRC32(filepath)
-			@hLH:			Handle to LH module, when called as method, argument is automatically provided.
-			@szFilepath:	The path to a file to calculate a checksum from
-			@init:			The init CRC value, defaults to 0
-			
-			returns:		CRC32 checksum of file
-		]]
+        --[[ fileCRC32
+            note:           in AMS, call like hReturnedLH:fileCRC32(filepath)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @szFilepath:    The path to a file to calculate a checksum from
+            @init:          The init CRC value, defaults to 0
+            
+            returns:        CRC32 checksum of file
+        ]]
         fileCRC32 = function(hLH, szFilepath, init)
             local result = 0;
             local hFile  = io.open(szFilepath, "rb");
@@ -67,27 +67,27 @@ return {
             return result;
         end;
         
-		--[[ stringCRC32
-			note: 			in AMS, call like hReturnedLH:stringCRC32(string)
-			@hLH:			Handle to LH module, when called as method, argument is automatically provided.
-			@szString:		The string to calculate a checksum from
-			@init:			The init CRC value, defaults to 0
-			
-			returns:		CRC32 checksum of string
-		]]
+        --[[ stringCRC32
+            note:           in AMS, call like hReturnedLH:stringCRC32(string)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @szString:      The string to calculate a checksum from
+            @init:          The init CRC value, defaults to 0
+            
+            returns:        CRC32 checksum of string
+        ]]
         stringCRC32 = function(hLH, szString, init)
             return hLH.CRC32(szString, szString:len(), ((type(init) == "number") and init or 0));
         end;
         
-		--[[ fileCRC32_2
-			note: 			in AMS, call like hReturnedLH:fileCRC32_2(filepath, 0, bufferToCRCTable)
-			@hLH:			Handle to LH module, when called as method, argument is automatically provided.
-			@szFilepath:	The path to a file to calculate a checksum from
-			@init:			The init CRC value, defaults to 0
-			@crc_tab:		A pointer to an array containing the precalculated CRC table
-			
-			returns:		CRC32 checksum of file
-		]]
+        --[[ fileCRC32_2
+            note:           in AMS, call like hReturnedLH:fileCRC32_2(filepath, 0, bufferToCRCTable)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @szFilepath:    The path to a file to calculate a checksum from
+            @init:          The init CRC value, defaults to 0
+            @crc_tab:       A pointer to an array containing the precalculated CRC table
+            
+            returns:        CRC32 checksum of file
+        ]]
         fileCRC32_2 = function(hLH, szFilepath, init, crc_tab)
             local result = 0;
             local hFile  = io.open(szFilepath, "rb");
@@ -100,15 +100,15 @@ return {
             return result;
         end;
         
-		--[[ stringCRC32_2
-			note: 			in AMS, call like hReturnedLH:stringCRC32_2(string, 0, bufferToCRCTable)
-			@hLH:			Handle to LH module, when called as method, argument is automatically provided.
-			@szString:		The string to calculate a checksum from
-			@init:			The init CRC value, defaults to 0
-			@crc_tab:		A pointer to an array containing the precalculated CRC table
-			
-			returns:		CRC32 checksum of string
-		]]
+        --[[ stringCRC32_2
+            note:           in AMS, call like hReturnedLH:stringCRC32_2(string, 0, bufferToCRCTable)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @szString:      The string to calculate a checksum from
+            @init:          The init CRC value, defaults to 0
+            @crc_tab:       A pointer to an array containing the precalculated CRC table
+            
+            returns:        CRC32 checksum of string
+        ]]
         stringCRC32_2 = function(hLH, szString, init, crc_tab)
             return hLH.CRC32_2(szString, szString:len(), ((type(init) == "number") and init or 0), crc_tab);
         end;
@@ -158,7 +158,7 @@ return {
                 
                 jmp lreturn
                 
-                crc32_table	dd 000000000h, 077073096h, 0EE0E612Ch, 0990951BAh, 0076DC419h, 0706AF48Fh, 0E963A535h, 09E6495A3h, 00EDB8832h, 079DCB8A4h
+                crc32_table    dd 000000000h, 077073096h, 0EE0E612Ch, 0990951BAh, 0076DC419h, 0706AF48Fh, 0E963A535h, 09E6495A3h, 00EDB8832h, 079DCB8A4h
                     dd 0E0D5E91Eh, 097D2D988h, 009B64C2Bh, 07EB17CBDh, 0E7B82D07h, 090BF1D91h, 01DB71064h, 06AB020F2h, 0F3B97148h, 084BE41DEh
                     dd 01ADAD47Dh, 06DDDE4EBh, 0F4D4B551h, 083D385C7h, 0136C9856h, 0646BA8C0h, 0FD62F97Ah, 08A65C9ECh, 014015C4Fh, 063066CD9h
                     dd 0FA0F3D63h, 08D080DF5h, 03B6E20C8h, 04C69105Eh, 0D56041E4h, 0A2677172h, 03C03E4D1h, 04B04D447h, 0D20D85FDh, 0A50AB56Bh
@@ -191,9 +191,9 @@ return {
         };
         
         CRC32_2 = {
-			-- The same algorithm as CRC32, however this one does not define the CRC32 table 
-			-- in assembly. This assembly requires you to provide it with a pointer to a similar
-			-- CRC32 table buffer.
+            -- The same algorithm as CRC32, however this one does not define the CRC32 table 
+            -- in assembly. This assembly requires you to provide it with a pointer to a similar
+            -- CRC32 table buffer.
             dependencies = {}; -- No dependencies in this one.
             assembly = [=[;ASSEMBLY
                 include '%incdir%/macro.inc'
