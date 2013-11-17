@@ -41,7 +41,7 @@
 
 local root = "";
 if(type(Application) == "table")then
-    root = _SourceFolder.."\\".."AutoPlay\\Scripts\\lh\\";
+    root = _SourceFolder.."\\".."AutoPlay\\Scripts\\lh-framework\\lh\\";
 end
 local crctab = {
     -- The crc32 table for each module will be automatically 
