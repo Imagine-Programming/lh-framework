@@ -3,7 +3,7 @@
 #################
 *.lh
 *.exe
-src\main.lua
+src/main.lua
 
 #################
 ## Eclipse
