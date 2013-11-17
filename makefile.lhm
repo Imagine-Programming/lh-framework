@@ -13,3 +13,6 @@ src\util\rgba.lua                    = build\lh-framework\lh\util\rgba.lh
 [after]
 build\tools\updatemain build\lh-framework\lh src\updatemain_template.lua src\main.lua
 imxlh-cli --lua src\main.lua --out build\lh-framework\main.lh
+
+[crc32]
+build\lh-framework\main.lh           = build\lh-framework\main.crc32
