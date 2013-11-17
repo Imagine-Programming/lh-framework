@@ -22,6 +22,7 @@ Networking
 IMXLH Version
 -------------
 This code requires **[Imagine MemoryEx LH Compiler 1.2] [1]** or any version greater than that.
+Aside from that, **[MemoryEx 2.2] [2]** or greater is required to be able to load the produced LH modules.
 
 Compile
 -------
@@ -34,3 +35,4 @@ CRC32 fingerprint required in main.lh will be lost.
 
 
   [1]: http://www.memoryex.net/imxlh.html        "IMXLH"
+  [2]: http://www.memoryex.net/mx.html        "MX"
