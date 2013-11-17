@@ -3,12 +3,12 @@ rmdir /S /Q build\lh-framework\
 del src\main.lua
 
 [make]
-src\crypto\checksum\crc32.lua 		= build\lh-framework\lh\crypto\checksum\crc32.lh
-src\crypto\cipher\hide-mem.lua 		= build\lh-framework\lh\crypto\cipher\hide-mem.lh
-src\crypto\util\isaac.lua 			= build\lh-framework\lh\crypto\util\isaac.lh
+src\crypto\checksum\crc32.lua        = build\lh-framework\lh\crypto\checksum\crc32.lh
+src\crypto\cipher\hide-mem.lua       = build\lh-framework\lh\crypto\cipher\hide-mem.lh
+src\crypto\util\isaac.lua            = build\lh-framework\lh\crypto\util\isaac.lh
 
-src\networking\resolve.lua			= build\lh-framework\lh\networking\resolve.lh
-src\util\rgba.lua					= build\lh-framework\lh\util\rgba.lh
+src\networking\resolve.lua           = build\lh-framework\lh\networking\resolve.lh
+src\util\rgba.lua                    = build\lh-framework\lh\util\rgba.lh
 
 [after]
 build\tools\updatemain build\lh-framework\lh src\updatemain_template.lua src\main.lua
