@@ -144,13 +144,13 @@ If(OpenConsole("bin2base64"))
 EndIf 
 
 
-; IDE Options = PureBasic 5.20 LTS (Windows - x86)
+; IDE Options = PureBasic 5.20 beta 2 (Windows - x86)
 ; ExecutableFormat = Console
 ; CursorPosition = 55
 ; FirstLine = 28
-; Folding = --
+; Folding = -
 ; EnableXP
-; Executable = ..\..\build\tools\updatemain.exe
+; Executable = ..\..\build\tools\b2b64.exe
 ; CompileSourceDirectory
-; EnableCompileCount = 16
-; EnableBuildCount = 3
+; EnableCompileCount = 17
+; EnableBuildCount = 4
