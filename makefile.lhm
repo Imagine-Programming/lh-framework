@@ -1,6 +1,10 @@
 [before]
 rmdir /S /Q build\lh-framework\
 del src\main.lua
+del build\tools\updatemain.exe
+del build\tools\b2b64.exe
+pbcompiler /EXE build\tools\updatemain.exe src\tools\updatemain.pb
+pbcompiler /EXE build\tools\b2b64.exe src\tools\b2b64.pb
 
 [make]
 src\crypto\checksum\crc32.lua        = build\lh-framework\lh\crypto\checksum\crc32.lh
