@@ -14,6 +14,7 @@ src\crypto\util\isaac.lua            = build\lh-framework\lh\crypto\util\isaac.l
 
 src\networking\resolve.lua           = build\lh-framework\lh\networking\resolve.lh
 src\util\rgba.lua                    = build\lh-framework\lh\util\rgba.lh
+src\util\bit.lua                    = build\lh-framework\lh\util\bit.lh
 
 [after]
 build\tools\updatemain build\lh-framework\lh src\updatemain_template.lua src\main.lua

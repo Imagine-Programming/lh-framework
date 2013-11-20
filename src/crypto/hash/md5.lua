@@ -78,7 +78,8 @@ local S43 = 15;
 local S44 = 21;
 
 local struct = MemoryEx.DefineStruct;
-local band, bor, bxor, bnot, bl, br = Bitwise.And, Bitwise.Or, Bitwise.Xor, Bitwise.Not, Bitwise.ASL, Bitwise.ASR;
+local band, bl, br;
+local bound;
 
 -- MD5 Context
 local MD5_CTX = struct{
@@ -92,68 +93,269 @@ local function ctx_fptr(ctx, field)
     return (ctx:GetPointer() + ctx:Offset(field));
 end;
 
-local PADDING;
-if(type(Application) == "table")then
+local PADDING;   
+local rol, ror;
+local F, G, H, I;
+local FF, GG, HH, II;
+
+if(Application)then
     PADDING = MemoryEx.Allocate(64);
     MemoryEx.Zero(PADDING, 64);
     MemoryEx.Byte(PADDING, 0x80);
-end
 
--- F, G, H and I are basic MD5 routines
-local function F(x, y, z)
-    -- x&y|(~x&z)
-    return bor(band(x, y), band(bnot(x), z));
-end
-
-local function G(x, y, z)
-    -- x&z|(y&~z)
-    return bor(band(x, z), band(y, bnot(z)));
-end
-
-local function H(x, y, z)
-    -- x ! y ! z where ! is XOR
-    return bxor(x, y, z);
-end
-
-local function I(x, y, z)
-    -- y!(x|~z) where ! is XOR
-    return bxor(y, bor(x, bnot(z)))
-end
-
--- when lrotate fails, try these ones (rotl)  
-local function rotl(b,c)
-   return bor(bl(b, band(c, 0x1f)), br(b, (32 - (band(c, 0x1f)))));
-end
-
-local function rotr(b,c)
-   return bor(br(b, band(c, 0x1f)), bl(b, (32 - (band(c, 0x1f)))));
-end
-
--- lrotate / rotate x n bits to the left
-local function lrotate(x, n)
-    return bor(bl(x, n), band(br(x, (32 - n)), (bl(1, n) - 1)));
+    ASM.Initialize();
+    
+    bl = ASM.Assemble[[
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 8]
+        MOV             ECX, [EBP + 12]
+        SHL             EAX, CL
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not bl.assembled)then
+        local asmError = bl:GetError();
+        error("unknown error");
+    end
+    
+    br = ASM.Assemble[[
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 8]
+        MOV             ECX, [EBP + 12]
+        SHR             EAX, CL
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not br.assembled)then
+        local asmError = br:GetError();
+        error("unknown error");
+    end
+    
+    band = ASM.Assemble[[
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 8]
+        MOV             ECX, [EBP + 12]
+        AND             EAX, ECX
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not band.assembled)then
+        local asmError = band:GetError();
+        error("unknown error");
+    end
+    
+    bound = function(a)
+        return band(a, 0xFFFFFFFF);
+    end; 
+    
+    rol = ASM.Assemble[[
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 8]
+        MOV             ECX, [EBP + 12]
+        ROL             EAX, CL
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not rol.assembled)then
+        local asmError = rol:GetError();
+        error("unknown error");
+    end
+    
+    ror = ASM.Assemble[[
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 8]
+        MOV             ECX, [EBP + 12]
+        ROR             EAX, CL
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not ror.assembled)then
+        local asmError = ror:GetError();
+        error("unknown error");
+    end
+    
+    F = ASM.Assemble[[; x&y|(~x&z)
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 8]      ; x
+        NOT             EAX
+        AND             EAX, [EBP + 16]     ; z
+        MOV             ECX, [EBP + 8]      ; x
+        AND             ECX, [EBP + 12]     ; y
+        OR              EAX, ECX
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not F.assembled)then
+        local asmError = F:GetError();
+        error("unknown error");
+    end
+    
+    G = ASM.Assemble[[; x&z|(~z&y)
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 16]     ; z
+        NOT             EAX
+        AND             EAX, [EBP + 12]     ; y
+        MOV             ECX, [EBP + 8]      ; x
+        AND             ECX, [EBP + 16]     ; z
+        OR              EAX, ECX
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not G.assembled)then
+        local asmError = G:GetError();
+        error("unknown error");
+    end
+    
+    H = ASM.Assemble[[; x ! y ! z where ! is XOR
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 8]      ; x
+        XOR             EAX, [EBP + 12]     ; y
+        XOR             EAX, [EBP + 16]     ; z
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not H.assembled)then
+        local asmError = H:GetError();
+        error("unknown error");
+    end
+    
+    I = ASM.Assemble[[; y!(x|~z) where ! is XOR
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        MOV             EAX, [EBP + 16]     ; z
+        NOT             EAX
+        OR              EAX, [EBP + 8]      ; x
+        MOV             ECX, [EBP + 12]     ; y
+        XOR             EAX, ECX
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not I.assembled)then
+        local asmError = I:GetError();
+        error("unknown error");
+    end
+    
+    badd = ASM.Assemble[[; a+b+c+d
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        XOR             EAX, EAX
+        ADD             EAX, [EBP + 8]
+        ADD             EAX, [EBP + 12]
+        ADD             EAX, [EBP + 16]
+        ADD             EAX, [EBP + 20]
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not badd.assembled)then
+        local asmError = badd:GetError();
+        error("unknown error");
+    end
+    
+    badd2 = ASM.Assemble[[; a+b
+        USE32
+        ORG             100h
+        
+        PUSH            EBP
+        MOV             EBP, ESP
+        
+        XOR             EAX, EAX
+        ADD             EAX, [EBP + 8]
+        ADD             EAX, [EBP + 12]
+        
+        POP             EBP
+        RETN
+    ]];
+    
+    if(not badd2.assembled)then
+        local asmError = badd2:GetError();
+        error("unknown error");
+    end
 end
 
 -- FF, GG, HH and II transformations for rounds 1, 2, 3 and 4. 
 -- Rotation is separate from addition to prevent recomputation.
 local function FF(a, b, c, d, x, s, ac)
-    a = (a + F(b, c, d) + x + ac);
-    return (lrotate(a, s) + b);
+    return badd2(rol(badd(a, F(b, c, d), x, ac), s), b);
 end
 
 local function GG(a, b, c, d, x, s, ac)
-    a = (a + G(b, c, d) + x + ac);
-    return (lrotate(a, s) + b);
+    return badd2(rol(badd(a, G(b, c, d), x, ac), s), b);
 end
 
 local function HH(a, b, c, d, x, s, ac)
-    a = (a + H(b, c, d) + x + ac);
-    return (lrotate(a, s) + b);
+    return badd2(rol(badd(a, H(b, c, d), x, ac), s), b);
 end
 
 local function II(a, b, c, d, x, s, ac)
-    a = (a + I(b, c, d) + x + ac);
-    return (lrotate(a, s) + b);
+    return badd2(rol(badd(a, I(b, c, d), x, ac), s), b);
 end
 
 -- MD5 initialization. Begins an MD5 operation, writing a new context.
@@ -247,10 +449,10 @@ local function MD5Transform(hCTX, x)
     c=II(c, d, a, b, L(x+ 8), S43, 0x2ad7d2bb); --  * 63 *
     b=II(b, c, d, a, L(x+36), S44, 0xeb86d391); --  * 64 *
     
-    hCTX.state[0] = (hCTX.state[0] + a);
-    hCTX.state[1] = (hCTX.state[1] + b);
-    hCTX.state[2] = (hCTX.state[2] + c);
-    hCTX.state[3] = (hCTX.state[3] + d);
+    hCTX.state[0] = badd2(hCTX.state[0], a);
+    hCTX.state[1] = badd2(hCTX.state[1], b);
+    hCTX.state[2] = badd2(hCTX.state[2], c);
+    hCTX.state[3] = badd2(hCTX.state[3], d);
 end
 
 -- MD5 block update operation. Continues an MD5 message-digest
@@ -261,11 +463,11 @@ local function MD5Update(hCTX, lpInput, dwInputLength)
     local index = band(br(hCTX.count[0], 3), 0x3F);
     
     -- Update number of bits
-    hCTX.count[0] = (hCTX.count[0] + bl(dwInputLength, 3));
+    hCTX.count[0] = badd2(hCTX.count[0], bl(dwInputLength, 3));
     if(hCTX.count[0] < bl(dwInputLength, 3))then
-        hCTX.count[1] = (hCTX.count[1] + 1);
+        hCTX.count[1] = badd2(hCTX.count[1], 1);
     end
-    hCTX.count[1] = (hCTX.count[1] + br(dwInputLength, 29));
+    hCTX.count[1] = badd2(hCTX.count[1], br(dwInputLength, 29));
     
     local dwPartLen = (64 - index);
     
@@ -275,9 +477,9 @@ local function MD5Update(hCTX, lpInput, dwInputLength)
     local lps = ctx_fptr(hCTX, "state");
     if(dwInputLength >= dwPartLen)then
         MemoryEx.Copy(lpInput, lpb + index, dwPartLen);
-        MD5Transform(lps, lpb);
+        MD5Transform(hCTX, lpb);
         for i = dwPartLen, (dwInputLength - 64), 64 do
-            MD5Transform(lps, lpInput + i);
+            MD5Transform(hCTX, lpInput + i);
             rem = i;
         end
         
@@ -326,6 +528,22 @@ local function MD5Final(lpDigest, hCTX)
     end
 end;
 
+-- a function to convert data to a hexadecimal string.
+local function datahex(data, len)
+    local s = "";
+    local f = string.format;
+    for i = 0, (len - 1) do
+        local h = f("%x", MemoryEx.UnsignedByte(data + i));
+        if(h:len() < 2)then
+            h = "0"..h;
+        end
+        
+        s = s..h;
+    end
+    
+    return s;
+end;
+
 return {
     info = {
         name        = "md5.lh";
@@ -336,6 +554,25 @@ return {
     };
     
     functions = {
-        -- TODO: Init functions and String, buffer and file fingerprinting functions.
+        md5 = function(buffer, length)
+            local md5;
+            local ctx = MD5_CTX:New();
+            if(ctx)then
+                local digest = MemoryEx.Allocate(16);
+                if(digest)then
+                    MD5Init(ctx);
+                    MD5Update(ctx, buffer, length);
+                    MD5Final(digest, ctx);
+                    
+                    md5 = datahex(digest, 16);
+                    
+                    MemoryEx.Free(digest);
+                end
+                
+                ctx:Free();
+            end
+            
+            return md5;
+        end;
     };
 }
