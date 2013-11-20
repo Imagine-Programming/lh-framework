@@ -60,7 +60,7 @@ return {
                 
                 POP             EBP
                 RETN
-            ]=];
+            ;ENDASSEMBLY]=];
         };
         
         bshr = {
@@ -77,7 +77,7 @@ return {
                 
                 POP             EBP
                 RETN
-            ]=];
+            ;ENDASSEMBLY]=];
         };
         
         -- and
@@ -95,7 +95,7 @@ return {
                 
                 POP             EBP
                 RETN
-            ]=];
+            ;ENDASSEMBLY]=];
         };
         
         -- or / xor
@@ -113,7 +113,7 @@ return {
                 
                 POP             EBP
                 RETN
-            ]=];
+            ;ENDASSEMBLY]=];
         };
         
         bxor = {
@@ -130,7 +130,7 @@ return {
                 
                 POP             EBP
                 RETN
-            ]=];
+            ;ENDASSEMBLY]=];
         };
         
         -- not
@@ -147,7 +147,7 @@ return {
                 
                 POP             EBP
                 RETN
-            ]=];
+            ;ENDASSEMBLY]=];
         };
         
         -- rol / ror
@@ -165,7 +165,7 @@ return {
                 
                 POP             EBP
                 RETN
-            ]=];
+            ;ENDASSEMBLY]=];
         }; 
         
         bror = {
@@ -182,7 +182,298 @@ return {
                 
                 POP             EBP
                 RETN
-            ]=];
+            ;ENDASSEMBLY]=];
         }; 
+        
+        -- addition functions, including additions with up to 5 addition values.
+        badd = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                ADD             EAX, [EBP + 12]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+    
+        badd3 = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                ADD             EAX, [EBP + 12]
+                ADD             EAX, [EBP + 16]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+    
+        badd4 = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                ADD             EAX, [EBP + 12]
+                ADD             EAX, [EBP + 16]
+                ADD             EAX, [EBP + 20]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        badd5 = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                ADD             EAX, [EBP + 12]
+                ADD             EAX, [EBP + 16]
+                ADD             EAX, [EBP + 20]
+                ADD             EAX, [EBP + 24]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        -- subtraction functions, including subtractions with up to 5 subtraction values.
+        bsub = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                SUB             EAX, [EBP + 12]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+
+        bsub2 = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                SUB             EAX, [EBP + 12]
+                SUB             EAX, [EBP + 16]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+
+        bsub3 = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                SUB             EAX, [EBP + 12]
+                SUB             EAX, [EBP + 16]
+                SUB             EAX, [EBP + 20]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+
+        bsub4 = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                SUB             EAX, [EBP + 12]
+                SUB             EAX, [EBP + 16]
+                SUB             EAX, [EBP + 20]
+                SUB             EAX, [EBP + 24]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+
+        bsub5 = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                SUB             EAX, [EBP + 12]
+                SUB             EAX, [EBP + 16]
+                SUB             EAX, [EBP + 20]
+                SUB             EAX, [EBP + 24]
+                SUB             EAX, [EBP + 28]
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        -- quick bound functions, making sure only x-bits are set.
+        bbound4 = {
+            assembly = [=[;ASSEMBLY
+                USE32  
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                AND             EAX, 0xF
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        bbound8 = {
+            assembly = [=[;ASSEMBLY
+                USE32  
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                AND             EAX, 0xFF
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        bbound12 = {
+            assembly = [=[;ASSEMBLY
+                USE32  
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                AND             EAX, 0xFFF
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        bbound16 = {
+            assembly = [=[;ASSEMBLY
+                USE32  
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                AND             EAX, 0xFFFF
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        bbound20 = {
+            assembly = [=[;ASSEMBLY
+                USE32  
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                AND             EAX, 0xFFFFF
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        bbound24 = {
+            assembly = [=[;ASSEMBLY
+                USE32  
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                AND             EAX, 0xFFFFFF
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        bbound28 = {
+            assembly = [=[;ASSEMBLY
+                USE32  
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                AND             EAX, 0xFFFFFFF
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
+        
+        bbound32 = {
+            assembly = [=[;ASSEMBLY
+                USE32  
+                ORG             100h
+                
+                PUSH            EBP
+                MOV             EBP, ESP
+                
+                MOV             EAX, [EBP + 8]
+                AND             EAX, 0xFFFFFFFF
+                
+                POP             EBP
+                RETN
+            ;ENDASSEMBLY]=];
+        };
     };
 }
