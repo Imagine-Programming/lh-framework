@@ -348,7 +348,6 @@ return {
             -- IMXLH assembled these for us, but we want to access them
             -- from anywhere in our module. F, G, H and I are variables
             -- local to the module scope.
-            F,  G,  H,  I  = hLH.F,  hLH.G,  hLH.H,  hLH.I;
             FF, GG, HH, II = hLH.FF, hLH.GG, hLH.HH, hLH.II;
             
         end;
@@ -400,7 +399,6 @@ return {
         -- F, G, H and I are standard MD5 routines.
         -- FF, GG, HH and II transformations for rounds 1, 2, 3 and 4. 
         -- Rotation is separate from addition to prevent recomputation.
-        
         FF = {
             assembly = [=[;ASSEMBLY
                 USE32
