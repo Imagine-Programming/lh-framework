@@ -58,7 +58,7 @@ local require = function(n)
         return unpack(loaded[n]);
     end
     
-    local path = n:gsub("\.", "\\");
+    local path = n:gsub("%.", "\\");
     path = root..(path..".lh");
     
     local f = io.open(path, "rb");
