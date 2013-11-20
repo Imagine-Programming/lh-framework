@@ -105,6 +105,9 @@ if(Application)then
     -- if you are not using this module as a part of the LH-framework, 
     -- make sure you load the bit.lh module.
     bit, serr, nerr = require "util.bit";
+    if(not bit)then
+        error("util.bit is required for the md5.lh module", 2);
+    end
 
     -- localize functions from the bit.lh module.
     bl,       br,       band,     rol,      ror,      badd4,     badd2,    bound = 
@@ -114,24 +117,6 @@ if(Application)then
     PADDING = MemoryEx.Allocate(64);
     MemoryEx.Zero(PADDING, 64);
     MemoryEx.Byte(PADDING, 0x80);
-end
-
--- FF, GG, HH and II transformations for rounds 1, 2, 3 and 4. 
--- Rotation is separate from addition to prevent recomputation.
-local function FF(a, b, c, d, x, s, ac)
-    return badd2(rol(badd4(a, F(b, c, d), x, ac), s), b);
-end
-
-local function GG(a, b, c, d, x, s, ac)
-    return badd2(rol(badd4(a, G(b, c, d), x, ac), s), b);
-end
-
-local function HH(a, b, c, d, x, s, ac)
-    return badd2(rol(badd4(a, H(b, c, d), x, ac), s), b);
-end
-
-local function II(a, b, c, d, x, s, ac)
-    return badd2(rol(badd4(a, I(b, c, d), x, ac), s), b);
 end
 
 -- MD5 initialization. Begins an MD5 operation, writing a new context.
@@ -149,13 +134,8 @@ end
 local L = MemoryEx.DWORD;
 
 -- MD5 basic transformation. Transforms state based on block.
-local function MD5Transform(hCTX, x)
-    local a, b, c, d;
-    a = hCTX.state[0];
-    b = hCTX.state[1];
-    c = hCTX.state[2];
-    d = hCTX.state[3];
-    
+local function MD5Transform(a1, b1, c1, d1, x)
+    local a, b, c, d = a1, b1, c1, d1;
     -- Round 1
     a=FF(a,b,c,d,L(x   ),S11,       -680876936); --  *  1 *
     d=FF(d,a,b,c,L(x+ 4),S12,       -389564586); --  *  2 *
@@ -224,11 +204,8 @@ local function MD5Transform(hCTX, x)
     d=II(d,a,b,c,L(x+44),S42,       -1120210379); --  * 62 *
     c=II(c,d,a,b,L(x+ 8),S43,        718787259); --  * 63 *
     b=II(b,c,d,a,L(x+36),S44,       -343485551); --  * 64 *
-    
-    hCTX.state[0] = badd2(hCTX.state[0], a);
-    hCTX.state[1] = badd2(hCTX.state[1], b);
-    hCTX.state[2] = badd2(hCTX.state[2], c);
-    hCTX.state[3] = badd2(hCTX.state[3], d);
+
+    return badd2(a1, a), badd2(b1, b), badd2(c1, c), badd2(d1, d);
 end
 
 -- MD5 block update operation. Continues an MD5 message-digest
@@ -253,12 +230,22 @@ local function MD5Update(hCTX, lpInput, dwInputLength)
     local lps = ctx_fptr(hCTX, "state");
     if(dwInputLength >= dwPartLen)then
         MemoryEx.Copy(lpInput, lpb + index, dwPartLen);
-        MD5Transform(hCTX, lpb);
+        
+        -- temporarily unpack the state and work with it,
+        -- prevent accessing the structure too often. 
+        -- Remember, it's a dynamic structure system, 
+        -- not statically compiled into the product.
+        local a, b, c, d = hCTX.state[0], hCTX.state[1], hCTX.state[2], hCTX.state[3];
+        
+        a, b, c, d = MD5Transform(a, b, c, d, lpb);
         rem = dwPartLen; 
         for i = dwPartLen, (dwInputLength - 64), 64 do
-            MD5Transform(hCTX, lpInput + i);
+            a, b, c, d = MD5Transform(a, b, c, d, lpInput + i);
             rem = i;
         end
+        
+        -- pack the state back into the context.
+        hCTX.state[0], hCTX.state[1], hCTX.state[2], hCTX.state[3] = a, b, c, d;
         
         index = 0;
     end
@@ -361,12 +348,13 @@ return {
             -- IMXLH assembled these for us, but we want to access them
             -- from anywhere in our module. F, G, H and I are variables
             -- local to the module scope.
-            F, G, H, I = hLH.F, hLH.G, hLH.H, hLH.I;
+            F,  G,  H,  I  = hLH.F,  hLH.G,  hLH.H,  hLH.I;
+            FF, GG, HH, II = hLH.FF, hLH.GG, hLH.HH, hLH.II;
             
         end;
         
-        buffer = function(hLH, buffer, length)
-            return buffer(buffer, length);
+        buffer = function(hLH, buff, length)
+            return buffer(buff, length);
         end;
         
         string = function(hLH, str)
@@ -385,9 +373,158 @@ return {
             
             return res;
         end;
+        
+        file = function(hLH, path)
+            local r = nil;
+            local f = io.open(path, "rb");
+            if(f)then
+                local data = f:read("*a");
+                local len  = data:len();
+                local buff = MemoryEx.AllocateEx(len + 1);
+                if(buff)then
+                    buff:String(-1, MEMEX_ASCII, data);
+                    r = buffer(buff:GetPointer(), len);
+                    buff:Free();
+                end
+                f:close();
+            end
+            
+            return r;
+        end;
     };
     
     assemblies = {
+        -- these routines include the F, FF, G, GG, H, HH and I, II 
+        -- MD5 routines. The single routines (e.g. F() or I()) are
+        -- included in their double routines (e.g. FF() or II())
+        -- F, G, H and I are standard MD5 routines.
+        -- FF, GG, HH and II transformations for rounds 1, 2, 3 and 4. 
+        -- Rotation is separate from addition to prevent recomputation.
+        
+        FF = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG         100h
+                
+                PUSH        EBP
+                MOV         EBP, ESP
+                
+                ; x&y|(~x&z)
+                ; F(x, y, z) = F(b, c, d)
+                MOV         EAX, [EBP + 12]     ; x
+                NOT         EAX
+                AND         EAX, [EBP + 20]     ; z
+                MOV         ECX, [EBP + 12]     ; x
+                AND         ECX, [EBP + 16]     ; y
+                OR          EAX, ECX
+                
+                ; FF(a, b, c, d, x, s, ac)
+                ADD         EAX, [EBP + 8]      ; a + EAX
+                ADD         EAX, [EBP + 24]     ; x + EAX
+                ADD         EAX, [EBP + 32]     ; ac + EAX
+                
+                MOV         ECX, [EBP + 28]     ; s
+                ROL         EAX, CL             ; rol(eax, s)
+                
+                ADD         EAX, [EBP + 12]     ; EAX + b
+                
+                POP         EBP
+                RETN
+            ;ENDASSEMBLY]=]
+        };
+        
+        GG = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG         100h
+                
+                PUSH        EBP
+                MOV         EBP, ESP
+                
+                ; x&z|(~z&y)
+                ; G(x, y, z) = G(b, c, d)                
+                MOV         EAX, [EBP + 20]     ; z
+                NOT         EAX
+                AND         EAX, [EBP + 16]     ; y
+                MOV         ECX, [EBP + 12]     ; x
+                AND         ECX, [EBP + 20]     ; z
+                OR          EAX, ECX
+                
+                ; GG(a, b, c, d, x, s, ac)
+                ADD         EAX, [EBP + 8]      ; a + EAX
+                ADD         EAX, [EBP + 24]     ; x + EAX
+                ADD         EAX, [EBP + 32]     ; ac + EAX
+                
+                MOV         ECX, [EBP + 28]     ; s
+                ROL         EAX, CL             ; rol(eax, s)
+                
+                ADD         EAX, [EBP + 12]     ; EAX + b
+                
+                POP         EBP
+                RETN
+            ;ENDASSEMBLY]=]
+        };
+        
+        HH = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG         100h
+                
+                PUSH        EBP
+                MOV         EBP, ESP
+                
+                ; x ! y ! z where ! is XOR
+                ; H(x, y, z) = H(b, c, d)                
+                MOV         EAX, [EBP + 12]     ; x
+                XOR         EAX, [EBP + 16]     ; y
+                XOR         EAX, [EBP + 20]     ; z
+                
+                ; HH(a, b, c, d, x, s, ac)
+                ADD         EAX, [EBP + 8]      ; a + EAX
+                ADD         EAX, [EBP + 24]     ; x + EAX
+                ADD         EAX, [EBP + 32]     ; ac + EAX
+                
+                MOV         ECX, [EBP + 28]     ; s
+                ROL         EAX, CL             ; rol(eax, s)
+                
+                ADD         EAX, [EBP + 12]     ; EAX + b
+                
+                POP         EBP
+                RETN
+            ;ENDASSEMBLY]=]
+        };
+        
+        II = {
+            assembly = [=[;ASSEMBLY
+                USE32
+                ORG         100h
+                
+                PUSH        EBP
+                MOV         EBP, ESP
+                
+                ; y!(x|~z) where ! is XOR
+                ; I(x, y, z) = I(b, c, d)                
+                MOV         EAX, [EBP + 20]     ; z
+                NOT         EAX
+                OR          EAX, [EBP + 12]     ; x
+                MOV         ECX, [EBP + 16]     ; y
+                XOR         EAX, ECX
+                
+                ; II(a, b, c, d, x, s, ac)
+                ADD         EAX, [EBP + 8]      ; a + EAX
+                ADD         EAX, [EBP + 24]     ; x + EAX
+                ADD         EAX, [EBP + 32]     ; ac + EAX
+                
+                MOV         ECX, [EBP + 28]     ; s
+                ROL         EAX, CL             ; rol(eax, s)
+                
+                ADD         EAX, [EBP + 12]     ; EAX + b
+                
+                POP         EBP
+                RETN
+            ;ENDASSEMBLY]=]
+        };
+        
         -- F, G, H and I are standard MD5 routines.
         F = {
             assembly = [=[;ASSEMBLY
