@@ -49,6 +49,42 @@ local crctab = {
 --[[%crc_table%]]
 };
 
+local loaded        = {};
+local old_require   = require;
+local require = function(n)
+    n = n:lower():gsub("([%s\r\n\t]+)", "");
+    
+    if(loaded[n])then
+        return unpack(loaded[n]);
+    end
+    
+    local path = n:gsub("\.", "\\");
+    path = root..(path..".lh");
+    
+    local f = io.open(path, "rb");
+    if(f)then
+        f:close();
+        
+        local lh, serr, nerr;
+        
+        if(crctab[n])then
+            lh, serr, nerr = MemoryEx.LoadLH(path, crctab[n]);
+        else
+            lh, serr, nerr = MemoryEx.LoadLH(path);
+        end
+        
+        if(lh)then
+            loaded[n] = {lh, serr, nerr};
+        end
+       
+       return lh, serr, nerr;
+    else
+        -- requested module not found in LH framework,
+        -- try the regular require method.
+        return old_require(n);
+    end
+end;
+
 return {
     info = {
         name        = "main.lh";
@@ -58,22 +94,11 @@ return {
         version     = "1,0,0,0";
     };
     
+    constants = {
+        require = require;
+    };
+    
     functions = {
-        require = function(n)
-            n = n:lower():gsub("([%s\r\n\t]+)", "");
-            
-            local path = n:gsub("\.", "\\");
-            path = root..(path..".lh");
-            
-            local f = io.open(path, "rb");
-            if(f)then
-                f:close();
-                if(crctab[n])then
-                    return MemoryEx.LoadLH(path, crctab[n]);
-                else
-                    return MemoryEx.LoadLH(path);
-                end
-            end
-        end;
+        require = require;
     };
 };
