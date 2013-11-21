@@ -146,11 +146,11 @@ EndIf
 
 ; IDE Options = PureBasic 5.20 beta 2 (Windows - x86)
 ; ExecutableFormat = Console
-; CursorPosition = 55
-; FirstLine = 28
+; CursorPosition = 42
+; FirstLine = 79
 ; Folding = -
 ; EnableXP
 ; Executable = ..\..\build\tools\b2b64.exe
 ; CompileSourceDirectory
-; EnableCompileCount = 17
+; EnableCompileCount = 18
 ; EnableBuildCount = 4
