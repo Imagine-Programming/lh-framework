@@ -6,7 +6,7 @@
     Contact:            http://www.imagine-programming.com/contact.html
     Date:               12-11-2013
     Version:            1.0.0.0
-    Remarks:            Requires MemoryEx and the bit.lh module.
+    Remarks:            Requires MemoryEx.
     Description:        An LH module for generating MD5 hashes of data
 
     GIT version
@@ -59,25 +59,10 @@
     ]=]
 ]]
 
-local bit, serr, nerr;
+-- libmd5 is a dll version of md5_slow.lua translated to C++, 
+-- compiled with vc++. The source will be added later.
 
--- Constants for MD5Transform
-local S11 =  7;
-local S12 = 12;
-local S13 = 17;
-local S14 = 22;
-local S21 =  5;
-local S22 =  9;
-local S23 = 14;
-local S24 = 20;
-local S31 =  4;
-local S32 = 11;
-local S33 = 16;
-local S34 = 23;
-local S41 =  6;
-local S42 = 10;
-local S43 = 15;
-local S44 = 21;
+local libmd5;
 
 -- alias for quick structure definitions
 local struct = MemoryEx.DefineStruct;
@@ -88,209 +73,6 @@ local MD5_CTX = struct{
     DWORD       ("count", 2);       -- number of bits, modulo 2^64 (lsb first)
     BYTE        ("buffer", 64);     -- input buffer block
 };
-
--- obtains a pointer to a specific field in a 
--- structured buffer.
--- e.g. local ptr = ctx_fptr(md5_ctx, "buffer")
-local function ctx_fptr(ctx, field)
-    return (ctx:GetPointer() + ctx:Offset(field));
-end;
-
-local PADDING; 
-local bl, br, band, rol, ror, badd, badd2, bound;
-local F, G, H, I;
-local FF, GG, HH, II;
-
-if(Application)then
-    -- if you are not using this module as a part of the LH-framework, 
-    -- make sure you load the bit.lh module.
-    bit, serr, nerr = require "util.bit";
-    if(not bit)then
-        error("util.bit is required for the md5.lh module", 2);
-    end
-
-    -- localize functions from the bit.lh module.
-    bl,       br,       band,     rol,      ror,      badd4,     badd2,    bound = 
-    bit.bshl, bit.bshr, bit.band, bit.brol, bit.bror, bit.badd4, bit.badd, bit.bound32;
-
-    -- padding buffer for the finalize step.
-    PADDING = MemoryEx.Allocate(64);
-    MemoryEx.Zero(PADDING, 64);
-    MemoryEx.Byte(PADDING, 0x80);
-end
-
--- MD5 initialization. Begins an MD5 operation, writing a new context.
-local function MD5Init(hCTX)
-    hCTX.count[0] = 0;
-    hCTX.count[1] = 0;
-    
-    -- load magic initialization constants.
-    hCTX.state[0] = 1732584193;
-    hCTX.state[1] = -271733879;
-    hCTX.state[2] = -1732584194;
-    hCTX.state[3] = 271733878;
-end
-
-local L = MemoryEx.DWORD;
-
--- MD5 basic transformation. Transforms state based on block.
-local function MD5Transform(a1, b1, c1, d1, x)
-    local a, b, c, d = a1, b1, c1, d1;
-    -- Round 1
-    a=FF(a,b,c,d,L(x   ),S11,       -680876936); --  *  1 *
-    d=FF(d,a,b,c,L(x+ 4),S12,       -389564586); --  *  2 *
-    c=FF(c,d,a,b,L(x+ 8),S13,        606105819); --  *  3 *
-    b=FF(b,c,d,a,L(x+12),S14,       -1044525330); --  *  4 *
-    a=FF(a,b,c,d,L(x+16),S11,       -176418897); --  *  5 *
-    d=FF(d,a,b,c,L(x+20),S12,        1200080426); --  *  6 *
-    c=FF(c,d,a,b,L(x+24),S13,       -1473231341); --  *  7 *
-    b=FF(b,c,d,a,L(x+28),S14,       -45705983); --  *  8 *
-    a=FF(a,b,c,d,L(x+32),S11,        1770035416); --  *  9 *
-    d=FF(d,a,b,c,L(x+36),S12,       -1958414417); --  * 10 *
-    c=FF(c,d,a,b,L(x+40),S13,       -42063); --  * 11 *
-    b=FF(b,c,d,a,L(x+44),S14,       -1990404162); --  * 12 *
-    a=FF(a,b,c,d,L(x+48),S11,        1804603682); --  * 13 *
-    d=FF(d,a,b,c,L(x+52),S12,       -40341101); --  * 14 *
-    c=FF(c,d,a,b,L(x+56),S13,       -1502002290); --  * 15 *
-    b=FF(b,c,d,a,L(x+60),S14,        1236535329); --  * 16 *
-    -- Round 2
-    a=GG(a,b,c,d,L(x+ 4),S21,       -165796510); --  * 17 *
-    d=GG(d,a,b,c,L(x+24),S22,       -1069501632); --  * 18 *
-    c=GG(c,d,a,b,L(x+44),S23,        643717713); --  * 19 *
-    b=GG(b,c,d,a,L(x   ),S24,       -373897302); --  * 20 *
-    a=GG(a,b,c,d,L(x+20),S21,       -701558691); --  * 21 *
-    d=GG(d,a,b,c,L(x+40),S22,        38016083) ; --  * 22 *
-    c=GG(c,d,a,b,L(x+60),S23,       -660478335); --  * 23 *
-    b=GG(b,c,d,a,L(x+16),S24,       -405537848); --  * 24 *
-    a=GG(a,b,c,d,L(x+36),S21,        568446438); --  * 25 *
-    d=GG(d,a,b,c,L(x+56),S22,       -1019803690); --  * 26 *
-    c=GG(c,d,a,b,L(x+12),S23,       -187363961); --  * 27 *
-    b=GG(b,c,d,a,L(x+32),S24,        1163531501); --  * 28 *
-    a=GG(a,b,c,d,L(x+52),S21,       -1444681467); --  * 29 *
-    d=GG(d,a,b,c,L(x+ 8),S22,       -51403784); --  * 30 *
-    c=GG(c,d,a,b,L(x+28),S23,        1735328473); --  * 31 *
-    b=GG(b,c,d,a,L(x+48),S24,       -1926607734); --  * 32 *
-    -- Round 3
-    a=HH(a,b,c,d,L(x+20),S31,       -378558); --  * 33 *
-    d=HH(d,a,b,c,L(x+32),S32,       -2022574463); --  * 34 *
-    c=HH(c,d,a,b,L(x+44),S33,        1839030562); --  * 35 *
-    b=HH(b,c,d,a,L(x+56),S34,       -35309556); --  * 36 *
-    a=HH(a,b,c,d,L(x+ 4),S31,       -1530992060); --  * 37 *
-    d=HH(d,a,b,c,L(x+16),S32,        1272893353); --  * 38 *
-    c=HH(c,d,a,b,L(x+28),S33,       -155497632); --  * 39 *
-    b=HH(b,c,d,a,L(x+40),S34,       -1094730640); --  * 40 *
-    a=HH(a,b,c,d,L(x+52),S31,        681279174); --  * 41 *
-    d=HH(d,a,b,c,L(x   ),S32,       -358537222); --  * 42 *
-    c=HH(c,d,a,b,L(x+12),S33,       -722521979); --  * 43 *
-    b=HH(b,c,d,a,L(x+24),S34,        76029189) ; --  * 44 *
-    a=HH(a,b,c,d,L(x+36),S31,       -640364487); --  * 45 *
-    d=HH(d,a,b,c,L(x+48),S32,       -421815835); --  * 46 *
-    c=HH(c,d,a,b,L(x+60),S33,        530742520); --  * 47 *
-    b=HH(b,c,d,a,L(x+ 8),S34,       -995338651); --  * 48 *
-    -- Round 4
-    a=II(a,b,c,d,L(x   ),S41,       -198630844); --  * 49 *
-    d=II(d,a,b,c,L(x+28),S42,        1126891415); --  * 50 *
-    c=II(c,d,a,b,L(x+56),S43,       -1416354905); --  * 51 *
-    b=II(b,c,d,a,L(x+20),S44,       -57434055); --  * 52 *
-    a=II(a,b,c,d,L(x+48),S41,        1700485571); --  * 53 *
-    d=II(d,a,b,c,L(x+12),S42,       -1894986606); --  * 54 *
-    c=II(c,d,a,b,L(x+40),S43,       -1051523); --  * 55 *
-    b=II(b,c,d,a,L(x+ 4),S44,       -2054922799); --  * 56 *
-    a=II(a,b,c,d,L(x+32),S41,        1873313359); --  * 57 *
-    d=II(d,a,b,c,L(x+60),S42,       -30611744); --  * 58 *
-    c=II(c,d,a,b,L(x+24),S43,       -1560198380); --  * 59 *
-    b=II(b,c,d,a,L(x+52),S44,        1309151649); --  * 60 *
-    a=II(a,b,c,d,L(x+16),S41,       -145523070); --  * 61 *
-    d=II(d,a,b,c,L(x+44),S42,       -1120210379); --  * 62 *
-    c=II(c,d,a,b,L(x+ 8),S43,        718787259); --  * 63 *
-    b=II(b,c,d,a,L(x+36),S44,       -343485551); --  * 64 *
-
-    return badd2(a1, a), badd2(b1, b), badd2(c1, c), badd2(d1, d);
-end
-
--- MD5 block update operation. Continues an MD5 message-digest
--- operation, processing another message block and updating the 
--- context.
-local function MD5Update(hCTX, lpInput, dwInputLength)
-    -- Compute number of bytes mod 64
-    local index = band(br(hCTX.count[0], 3), 0x3F);
-    
-    -- Update number of bits
-    hCTX.count[0] = badd2(hCTX.count[0], bl(dwInputLength, 3));
-    if(hCTX.count[0] < bl(dwInputLength, 3))then
-        hCTX.count[1] = badd2(hCTX.count[1], 1);
-    end
-    hCTX.count[1] = badd2(hCTX.count[1], br(dwInputLength, 29));
-    
-    local dwPartLen = (64 - index);
-    
-    -- Transform as often as possible
-    local rem = 0;
-    local lpb = ctx_fptr(hCTX, "buffer");
-    local lps = ctx_fptr(hCTX, "state");
-    if(dwInputLength >= dwPartLen)then
-        MemoryEx.Copy(lpInput, lpb + index, dwPartLen);
-        
-        -- temporarily unpack the state and work with it,
-        -- prevent accessing the structure too often. 
-        -- Remember, it's a dynamic structure system, 
-        -- not statically compiled into the product.
-        local a, b, c, d = hCTX.state[0], hCTX.state[1], hCTX.state[2], hCTX.state[3];
-        
-        a, b, c, d = MD5Transform(a, b, c, d, lpb);
-        rem = dwPartLen; 
-        for i = dwPartLen, (dwInputLength - 64), 64 do
-            a, b, c, d = MD5Transform(a, b, c, d, lpInput + i);
-            rem = i;
-        end
-        
-        -- pack the state back into the context.
-        hCTX.state[0], hCTX.state[1], hCTX.state[2], hCTX.state[3] = a, b, c, d;
-        
-        index = 0;
-    end
-    
-    -- Buffer remaining input
-    MemoryEx.Copy(lpInput + rem, lpb + index, dwInputLength - rem);
-end
-
--- MD5 finalization. Ends an MD5 message-digest operation, writing 
--- the message digest and cleaning the context.
-local function MD5Final(lpDigest, hCTX)
-    local lpb = ctx_fptr(hCTX, "buffer");
-    local lps = ctx_fptr(hCTX, "state");
-    local lpc = ctx_fptr(hCTX, "count");
-    
-    local bits = MemoryEx.Allocate(8);
-    if(bits)then
-        -- save number of bits
-        MemoryEx.Copy(lpc, bits, 8);
-        
-        -- pad out to 56 mod 64
-        local index     = band(br(hCTX.count[0], 3), 0x3f);
-        local dwPadLen  = 0;
-        
-        if(index < 56)then
-            dwPadLen = (56 - index);
-        else
-            dwPadLen = (120 - index);
-        end
-        
-        -- append padding
-        MD5Update(hCTX, PADDING, dwPadLen);
-        
-        -- append length (before padding)
-        MD5Update(hCTX, bits, 8);
-        
-        -- store state in digest
-        MemoryEx.Copy(lps, lpDigest, 16);
-        
-        -- clear context, removing all previous data
-        MemoryEx.Zero(hCTX:GetPointer(), hCTX:Size());
-        
-        MemoryEx.Free(bits);
-    end
-end;
 
 -- a function to convert data to a hexadecimal string.
 local function datahex(data, len)
@@ -315,9 +97,10 @@ local buffer = function(buffer, length)
     if(ctx)then
         local digest = MemoryEx.Allocate(16);
         if(digest)then
-            MD5Init(ctx);
-            MD5Update(ctx, buffer, length);
-            MD5Final(digest, ctx);
+            local lpctx = ctx:GetPointer();
+            libmd5.init(lpctx);
+            libmd5.update(lpctx, buffer, length);
+            libmd5.finalize(digest, lpctx);
             
             md5 = datahex(digest, 16);
             
@@ -330,7 +113,7 @@ local buffer = function(buffer, length)
     return md5;
 end;
 
-return {
+local lh = {
     info = {
         name        = "md5.lh";
         description = "Generate MD5 hashes of data.";
@@ -340,18 +123,6 @@ return {
     };
     
     functions = {
-        init = function(hLH)
-            if(type(hLH) ~= "table" or type(hLH.F) ~= "table")then
-                error("call init as a method, e.g. hLH:init()", 2);
-            end
-            
-            -- IMXLH assembled these for us, but we want to access them
-            -- from anywhere in our module. F, G, H and I are variables
-            -- local to the module scope.
-            FF, GG, HH, II = hLH.FF, hLH.GG, hLH.HH, hLH.II;
-            
-        end;
-        
         buffer = function(hLH, buff, length)
             return buffer(buff, length);
         end;
@@ -377,13 +148,34 @@ return {
             local r = nil;
             local f = io.open(path, "rb");
             if(f)then
-                local data = f:read("*a");
-                local len  = data:len();
-                local buff = MemoryEx.AllocateEx(len + 1);
-                if(buff)then
-                    buff:String(-1, MEMEX_ASCII, data);
-                    r = buffer(buff:GetPointer(), len);
-                    buff:Free();
+                local block = MemoryEx.AllocateEx(2048);
+                if(block)then
+                    local blockptr = block:GetPointer();
+                    local ctx = MD5_CTX:New();
+                    if(ctx)then
+                        local lpctx = ctx:GetPointer();
+                        
+                        libmd5.init(lpctx);
+                        repeat 
+                            local data = f:read(2048);
+                            if(data)then
+                                local len  = data:len();
+                                block:LString(len, data); 
+                                libmd5.update(lpctx, blockptr, len);
+                            end
+                        until (not data);
+                        
+                        local digest = MemoryEx.Allocate(16);
+                        if(digest)then
+                            libmd5.finalize(digest, lpctx);
+                            r = datahex(digest, 16);
+                            MemoryEx.Free(digest);
+                        end
+                        
+                        ctx:Free();
+                    end
+
+                    block:Free();
                 end
                 f:close();
             end
@@ -391,217 +183,7 @@ return {
             return r;
         end;
     };
-    
-    assemblies = {
-        -- these routines include the F, FF, G, GG, H, HH and I, II 
-        -- MD5 routines. The single routines (e.g. F() or I()) are
-        -- included in their double routines (e.g. FF() or II())
-        -- F, G, H and I are standard MD5 routines.
-        -- FF, GG, HH and II transformations for rounds 1, 2, 3 and 4. 
-        -- Rotation is separate from addition to prevent recomputation.
-        FF = {
-            assembly = [=[;ASSEMBLY
-                USE32
-                ORG         100h
-                
-                PUSH        EBP
-                MOV         EBP, ESP
-                
-                ; x&y|(~x&z)
-                ; F(x, y, z) = F(b, c, d)
-                MOV         EAX, [EBP + 12]     ; x
-                NOT         EAX
-                AND         EAX, [EBP + 20]     ; z
-                MOV         ECX, [EBP + 12]     ; x
-                AND         ECX, [EBP + 16]     ; y
-                OR          EAX, ECX
-                
-                ; FF(a, b, c, d, x, s, ac)
-                ADD         EAX, [EBP + 8]      ; a + EAX
-                ADD         EAX, [EBP + 24]     ; x + EAX
-                ADD         EAX, [EBP + 32]     ; ac + EAX
-                
-                MOV         ECX, [EBP + 28]     ; s
-                ROL         EAX, CL             ; rol(eax, s)
-                
-                ADD         EAX, [EBP + 12]     ; EAX + b
-                
-                POP         EBP
-                RETN
-            ;ENDASSEMBLY]=]
-        };
-        
-        GG = {
-            assembly = [=[;ASSEMBLY
-                USE32
-                ORG         100h
-                
-                PUSH        EBP
-                MOV         EBP, ESP
-                
-                ; x&z|(~z&y)
-                ; G(x, y, z) = G(b, c, d)                
-                MOV         EAX, [EBP + 20]     ; z
-                NOT         EAX
-                AND         EAX, [EBP + 16]     ; y
-                MOV         ECX, [EBP + 12]     ; x
-                AND         ECX, [EBP + 20]     ; z
-                OR          EAX, ECX
-                
-                ; GG(a, b, c, d, x, s, ac)
-                ADD         EAX, [EBP + 8]      ; a + EAX
-                ADD         EAX, [EBP + 24]     ; x + EAX
-                ADD         EAX, [EBP + 32]     ; ac + EAX
-                
-                MOV         ECX, [EBP + 28]     ; s
-                ROL         EAX, CL             ; rol(eax, s)
-                
-                ADD         EAX, [EBP + 12]     ; EAX + b
-                
-                POP         EBP
-                RETN
-            ;ENDASSEMBLY]=]
-        };
-        
-        HH = {
-            assembly = [=[;ASSEMBLY
-                USE32
-                ORG         100h
-                
-                PUSH        EBP
-                MOV         EBP, ESP
-                
-                ; x ! y ! z where ! is XOR
-                ; H(x, y, z) = H(b, c, d)                
-                MOV         EAX, [EBP + 12]     ; x
-                XOR         EAX, [EBP + 16]     ; y
-                XOR         EAX, [EBP + 20]     ; z
-                
-                ; HH(a, b, c, d, x, s, ac)
-                ADD         EAX, [EBP + 8]      ; a + EAX
-                ADD         EAX, [EBP + 24]     ; x + EAX
-                ADD         EAX, [EBP + 32]     ; ac + EAX
-                
-                MOV         ECX, [EBP + 28]     ; s
-                ROL         EAX, CL             ; rol(eax, s)
-                
-                ADD         EAX, [EBP + 12]     ; EAX + b
-                
-                POP         EBP
-                RETN
-            ;ENDASSEMBLY]=]
-        };
-        
-        II = {
-            assembly = [=[;ASSEMBLY
-                USE32
-                ORG         100h
-                
-                PUSH        EBP
-                MOV         EBP, ESP
-                
-                ; y!(x|~z) where ! is XOR
-                ; I(x, y, z) = I(b, c, d)                
-                MOV         EAX, [EBP + 20]     ; z
-                NOT         EAX
-                OR          EAX, [EBP + 12]     ; x
-                MOV         ECX, [EBP + 16]     ; y
-                XOR         EAX, ECX
-                
-                ; II(a, b, c, d, x, s, ac)
-                ADD         EAX, [EBP + 8]      ; a + EAX
-                ADD         EAX, [EBP + 24]     ; x + EAX
-                ADD         EAX, [EBP + 32]     ; ac + EAX
-                
-                MOV         ECX, [EBP + 28]     ; s
-                ROL         EAX, CL             ; rol(eax, s)
-                
-                ADD         EAX, [EBP + 12]     ; EAX + b
-                
-                POP         EBP
-                RETN
-            ;ENDASSEMBLY]=]
-        };
-        
-        -- F, G, H and I are standard MD5 routines.
-        F = {
-            assembly = [=[;ASSEMBLY
-                ; x&y|(~x&z)
-                USE32
-                ORG             100h
-                
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]      ; x
-                NOT             EAX
-                AND             EAX, [EBP + 16]     ; z
-                MOV             ECX, [EBP + 8]      ; x
-                AND             ECX, [EBP + 12]     ; y
-                OR              EAX, ECX
-                
-                POP             EBP
-                RETN
-            ;ENDASSEMBLY]=];
-        };
-        
-        G = {
-            assembly = [=[;ASSEMBLY
-                ; x&z|(~z&y)
-                USE32
-                ORG             100h
-                
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 16]     ; z
-                NOT             EAX
-                AND             EAX, [EBP + 12]     ; y
-                MOV             ECX, [EBP + 8]      ; x
-                AND             ECX, [EBP + 16]     ; z
-                OR              EAX, ECX
-                
-                POP             EBP
-                RETN
-            ;ENDASSEMBLY]=];
-        };
-        
-        H = {
-            assembly = [=[;ASSEMBLY
-                ; x ! y ! z where ! is XOR
-                USE32
-                ORG             100h
-                
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]      ; x
-                XOR             EAX, [EBP + 12]     ; y
-                XOR             EAX, [EBP + 16]     ; z
-                
-                POP             EBP
-                RETN
-            ;ENDASSEMBLY]=];
-        };
-        
-        I = {
-            assembly = [=[;ASSEMBLY
-                ; y!(x|~z) where ! is XOR
-                USE32
-                ORG             100h
-                
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 16]     ; z
-                NOT             EAX
-                OR              EAX, [EBP + 8]      ; x
-                MOV             ECX, [EBP + 12]     ; y
-                XOR             EAX, ECX
-                
-                POP             EBP
-                RETN
-            ;ENDASSEMBLY]=];
-        };
-    }
-}
+};
+
+libmd5 = Library.Load("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", true);
+return lh;
