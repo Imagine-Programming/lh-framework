@@ -3,13 +3,14 @@ rmdir /S /Q build\lh-framework\
 del src\main.lua
 del build\tools\updatemain.exe
 del build\tools\b2b64.exe
-pbcompiler /EXE build\tools\updatemain.exe src\tools\updatemain.pb
-pbcompiler /EXE build\tools\b2b64.exe src\tools\b2b64.pb
+pbcompiler /CONSOLE /EXE build\tools\updatemain.exe src\tools\updatemain.pb
+pbcompiler /CONSOLE /EXE build\tools\b2b64.exe src\tools\b2b64.pb
 
 [make]
 src\crypto\checksum\crc32.lua        = build\lh-framework\lh\crypto\checksum\crc32.lh
 src\crypto\cipher\hide-mem.lua       = build\lh-framework\lh\crypto\cipher\hide-mem.lh
 src\crypto\hash\md5.lua              = build\lh-framework\lh\crypto\hash\md5.lh
+src\crypto\hash\md5_slow.lua         = build\lh-framework\lh\crypto\hash\md5_slow.lh
 src\crypto\util\isaac.lua            = build\lh-framework\lh\crypto\util\isaac.lh
 
 src\networking\resolve.lua           = build\lh-framework\lh\networking\resolve.lh
