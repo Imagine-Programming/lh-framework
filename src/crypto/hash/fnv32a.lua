@@ -7,8 +7,7 @@
     Date:               12-11-2013
     Version:            1.0.0.0
     Remarks:            Requires MemoryEx
-    Description:        An LH module that allows you to calculate FNV32a checksums on data. Warning,
-                        fnv32a has a higher amount of collisions than CRC32. 
+    Description:        An LH module that allows you to calculate FNV32a hashes on data. 
 
     GIT version
     
@@ -39,7 +38,7 @@
 return {
     info = {
         name            = "fnv32a.lh";
-        descriptions    = "Make fnv32a checksums.";
+        descriptions    = "Make fnv32a hashes.";
         author          = "Imagine Programming <Bas Groothedde>";
         contact         = "contact@imagine-programming.com";
         website         = "http://www.imagine-programming.com/";
@@ -52,7 +51,7 @@ return {
             @hLH:           Handle to LH module, when called as method, argument is automatically provided.
             @szFilepath:    The path to a file to calculate a checksum from
             
-            returns:        FNV32a checksum of file
+            returns:        FNV32a hash of file
         ]]
         fileFNV32a = function(hLH, szFilepath)
             local result = 0;
@@ -71,7 +70,7 @@ return {
             @hLH:           Handle to LH module, when called as method, argument is automatically provided.
             @szString:      The string to calculate a checksum from
             
-            returns:        FNV32a checksum of string
+            returns:        FNV32a hash of string
         ]]
         stringFNV32a = function(hLH, szString)
             return hLH.FNV32a(szString, szString:len());
