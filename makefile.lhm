@@ -8,6 +8,7 @@ pbcompiler /CONSOLE /EXE build\tools\b2b64.exe src\tools\b2b64.pb
 
 [make]
 src\crypto\checksum\crc32.lua        = build\lh-framework\lh\crypto\checksum\crc32.lh
+src\crypto\checksum\fnv32a.lua       = build\lh-framework\lh\crypto\checksum\fnv32a.lh
 src\crypto\cipher\hide-mem.lua       = build\lh-framework\lh\crypto\cipher\hide-mem.lh
 src\crypto\hash\md5.lua              = build\lh-framework\lh\crypto\hash\md5.lh
 src\crypto\hash\md5_slow.lua         = build\lh-framework\lh\crypto\hash\md5_slow.lh
@@ -15,7 +16,7 @@ src\crypto\util\isaac.lua            = build\lh-framework\lh\crypto\util\isaac.l
 
 src\networking\resolve.lua           = build\lh-framework\lh\networking\resolve.lh
 src\util\rgba.lua                    = build\lh-framework\lh\util\rgba.lh
-src\util\bit.lua                    = build\lh-framework\lh\util\bit.lh
+src\util\bit.lua                     = build\lh-framework\lh\util\bit.lh
 
 [after]
 build\tools\updatemain build\lh-framework\lh src\updatemain_template.lua src\main.lua
