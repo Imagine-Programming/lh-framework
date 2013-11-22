@@ -47,71 +47,114 @@ return {
     }; 
 
     functions = {
-        --[[ fileCRC32
-            note:           in AMS, call like hReturnedLH:fileCRC32(filepath)
+        --[[ buffer - process buffer
+            note:           in AMS, call like hReturnedLH:buffer(buffer, length, init)
             @hLH:           Handle to LH module, when called as method, argument is automatically provided.
-            @szFilepath:    The path to a file to calculate a checksum from
+            @buffer:        A pointer to the data to process
+            @length:        The length of the data to process
             @init:          The init CRC value, defaults to 0
             
-            returns:        CRC32 checksum of file
+            returns:        CRC32 checksum of data
         ]]
-        fileCRC32 = function(hLH, szFilepath, init)
-            local result = 0;
-            local hFile  = io.open(szFilepath, "rb");
-            if(hFile)then
-                local data = hFile:read("*a");
-                result = hLH.CRC32(data, data:len(), ((type(init) == "number") and init or 0));
-                hFile:close();
+        buffer = function(hLH, buffer, length, init)
+            return hLH.CRC32(buffer, length, ((type(init) == "number") and init or 0));
+        end;
+        
+        --[[ string - process string
+            note:           in AMS, call like hReturnedLH:string(str, init)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @str:           The string to process
+            @init:          The init CRC value, defaults to 0
+            
+            returns:        CRC32 checksum of data
+        ]]
+        string = function(hLH, str, init)
+            return hLH.CRC32(str, str:len(), ((type(init) == "number") and init or 0));
+        end;
+        
+        --[[ file - process file
+            note:           in AMS, call like hReturnedLH:file(filepath, init)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @filepath:      The path to the file to check
+            @init:          The init CRC value, defaults to 0
+            
+            returns:        CRC32 checksum of data
+        ]]
+        file = function(hLH, filepath, init)
+            local r = ((type(init) == "number") and init or 0);
+            local f = io.open(filepath, "rb");
+            if(f)then
+                repeat 
+                    local data = f:read(2048);
+                    if(data)then
+                        local len  = data:len();
+                        r = hLH.CRC32(data, len, r);
+                    end
+                until (not data);
+                
+                f:close();
             end
             
-            return result;
+            return r;
         end;
         
-        --[[ stringCRC32
-            note:           in AMS, call like hReturnedLH:stringCRC32(string)
+        --[[ bufferex - process buffer using custom CRC table
+            note:           in AMS, call like hReturnedLH:buffer(buffer, length, init)
             @hLH:           Handle to LH module, when called as method, argument is automatically provided.
-            @szString:      The string to calculate a checksum from
+            @buffer:        A pointer to the data to process
+            @length:        The length of the data to process
             @init:          The init CRC value, defaults to 0
+            @crc_tab:       A pointer to a buffer containing your custom CRC32 table,
+                            this table has to be 1024 bytes in size (256 32-bit ints, DWORDS)
             
-            returns:        CRC32 checksum of string
+            returns:        CRC32 checksum of data
         ]]
-        stringCRC32 = function(hLH, szString, init)
-            return hLH.CRC32(szString, szString:len(), ((type(init) == "number") and init or 0));
+        bufferex = function(hLH, buffer, length, init, crc_tab)
+            return hLH.CRC32_2(buffer, length, ((type(init) == "number") and init or 0), crc_tab);
         end;
         
-        --[[ fileCRC32_2
-            note:           in AMS, call like hReturnedLH:fileCRC32_2(filepath, 0, bufferToCRCTable)
+        --[[ stringex - process string using custom CRC table
+            note:           in AMS, call like hReturnedLH:string(str, init)
             @hLH:           Handle to LH module, when called as method, argument is automatically provided.
-            @szFilepath:    The path to a file to calculate a checksum from
+            @str:           The string to process
             @init:          The init CRC value, defaults to 0
-            @crc_tab:       A pointer to an array containing the precalculated CRC table
+            @crc_tab:       A pointer to a buffer containing your custom CRC32 table,
+                            this table has to be 1024 bytes in size (256 32-bit ints, DWORDS)
             
-            returns:        CRC32 checksum of file
+            returns:        CRC32 checksum of data
         ]]
-        fileCRC32_2 = function(hLH, szFilepath, init, crc_tab)
-            local result = 0;
-            local hFile  = io.open(szFilepath, "rb");
-            if(hFile)then
-                local data = hFile:read("*a");
-                result = hLH.CRC32_2(data, data:len(), ((type(init) == "number") and init or 0), crc_tab);
-                hFile:close();
+        stringex = function(hLH, str, init, crc_tab)
+            return hLH.CRC32_2(str, str:len(), ((type(init) == "number") and init or 0), crc_tab);
+        end;
+        
+        --[[ fileex - process file using custom CRC table
+            note:           in AMS, call like hReturnedLH:file(filepath, init)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @filepath:      The path to the file to check
+            @init:          The init CRC value, defaults to 0
+            @crc_tab:       A pointer to a buffer containing your custom CRC32 table,
+                            this table has to be 1024 bytes in size (256 32-bit ints, DWORDS)
+            
+            returns:        CRC32 checksum of data
+        ]]
+        fileex = function(hLH, filepath, init, crc_tab)
+            local r = ((type(init) == "number") and init or 0);
+            local f = io.open(filepath, "rb");
+            if(f)then
+                repeat 
+                    local data = f:read(2048);
+                    if(data)then
+                        local len  = data:len();
+                        r = hLH.CRC32_2(data, len, r, crc_tab);
+                    end
+                until (not data);
+                
+                f:close();
             end
             
-            return result;
+            return r;
         end;
         
-        --[[ stringCRC32_2
-            note:           in AMS, call like hReturnedLH:stringCRC32_2(string, 0, bufferToCRCTable)
-            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
-            @szString:      The string to calculate a checksum from
-            @init:          The init CRC value, defaults to 0
-            @crc_tab:       A pointer to an array containing the precalculated CRC table
-            
-            returns:        CRC32 checksum of string
-        ]]
-        stringCRC32_2 = function(hLH, szString, init, crc_tab)
-            return hLH.CRC32_2(szString, szString:len(), ((type(init) == "number") and init or 0), crc_tab);
-        end;
     };
 
     assemblies = {

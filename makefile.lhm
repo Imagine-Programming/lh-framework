@@ -8,10 +8,11 @@ pbcompiler /CONSOLE /EXE build\tools\b2b64.exe src\tools\b2b64.pb
 
 [make]
 src\crypto\checksum\crc32.lua        = build\lh-framework\lh\crypto\checksum\crc32.lh
-src\crypto\checksum\fnv32a.lua       = build\lh-framework\lh\crypto\checksum\fnv32a.lh
 src\crypto\cipher\hide-mem.lua       = build\lh-framework\lh\crypto\cipher\hide-mem.lh
 src\crypto\hash\md5.lua              = build\lh-framework\lh\crypto\hash\md5.lh
 src\crypto\hash\md5_slow.lua         = build\lh-framework\lh\crypto\hash\md5_slow.lh
+src\crypto\hash\fnv32a.lua           = build\lh-framework\lh\crypto\hash\fnv32a.lh
+src\crypto\hash\murmur-hash3.lua     = build\lh-framework\lh\crypto\hash\murmur-hash3.lh
 src\crypto\util\isaac.lua            = build\lh-framework\lh\crypto\util\isaac.lh
 
 src\networking\resolve.lua           = build\lh-framework\lh\networking\resolve.lh

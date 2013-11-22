@@ -90,29 +90,6 @@ local function datahex(data, len)
     return s;
 end;
 
--- a function for a quick hash of a buffer.
-local buffer = function(buffer, length)
-    local md5;
-    local ctx = MD5_CTX:New();
-    if(ctx)then
-        local digest = MemoryEx.Allocate(16);
-        if(digest)then
-            local lpctx = ctx:GetPointer();
-            libmd5.init(lpctx);
-            libmd5.update(lpctx, buffer, length);
-            libmd5.finalize(digest, lpctx);
-            
-            md5 = datahex(digest, 16);
-            
-            MemoryEx.Free(digest);
-        end
-        
-        ctx:Free();
-    end
-    
-    return md5;
-end;
-
 local lh = {
     info = {
         name        = "md5.lh";
@@ -123,27 +100,72 @@ local lh = {
     };
     
     functions = {
-        buffer = function(hLH, buff, length)
-            return buffer(buff, length);
+        --[[ buffer - process buffer
+            note:           in AMS, call like hReturnedLH:buffer(buffer, length)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @buffer:        A pointer to the data to process
+            @length:        The length of the data to process
+            
+            returns:        MD5 hash of data
+        ]]
+        buffer = function(hLH, buffer, length)
+            local md5;
+            local ctx = MD5_CTX:New();
+            if(ctx)then
+                local digest = MemoryEx.Allocate(16);
+                if(digest)then
+                    local lpctx = ctx:GetPointer();
+                    libmd5.init(lpctx);
+                    libmd5.update(lpctx, buffer, length);
+                    libmd5.finalize(digest, lpctx);
+                    
+                    md5 = datahex(digest, 16);
+                    
+                    MemoryEx.Free(digest);
+                end
+                
+                ctx:Free();
+            end
+            
+            return md5;
         end;
         
+        --[[ string - process string
+            note:           in AMS, call like hReturnedLH:string(str)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @string:        The string to take an MD5 checksum of
+            
+            returns:        MD5 hash of data
+        ]]
         string = function(hLH, str)
-            local res = nil;
-            local len = str:len();
-            if(len < 1)then
-                return nil;
+            local md5;
+            local ctx = MD5_CTX:New();
+            if(ctx)then
+                local digest = MemoryEx.Allocate(16);
+                if(digest)then
+                    local lpctx = ctx:GetPointer();
+                    libmd5.init(lpctx);
+                    libmd5.update(lpctx, str, str:len());
+                    libmd5.finalize(digest, lpctx);
+                    
+                    md5 = datahex(digest, 16);
+                    
+                    MemoryEx.Free(digest);
+                end
+                
+                ctx:Free();
             end
             
-            local buff = MemoryEx.AllocateEx(len + 1);
-            if(buff)then
-                buff:String(-1, MEMEX_ASCII, str);
-                res = buffer(buff:GetPointer(), len);
-                buff:Free();
-            end
-            
-            return res;
+            return md5;
         end;
         
+        --[[ file - process file
+            note:           in AMS, call like hReturnedLH:file(file)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @path:          The path to the file that contains the data to take an MD5 checksum of.
+            
+            returns:        MD5 hash of data
+        ]]
         file = function(hLH, path)
             local r = nil;
             local f = io.open(path, "rb");

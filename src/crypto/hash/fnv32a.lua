@@ -46,34 +46,55 @@ return {
     }; 
 
     functions = {
-        --[[ fileFNV32a
-            note:           in AMS, call like hReturnedLH:fileFNV32a(filepath)
+        --[[ buffer - process buffer
+            note:           in AMS, call like hReturnedLH:buffer(buffer, length, init)
             @hLH:           Handle to LH module, when called as method, argument is automatically provided.
-            @szFilepath:    The path to a file to calculate a checksum from
+            @buffer:        A pointer to the data to process
+            @length:        The length of the data to process
+            @init:          The init FNV value, defaults to 0x811C9DC5
             
-            returns:        FNV32a hash of file
+            returns:        FNV32a checksum of data
         ]]
-        fileFNV32a = function(hLH, szFilepath)
-            local result = 0;
-            local hFile  = io.open(szFilepath, "rb");
-            if(hFile)then
-                local data = hFile:read("*a");
-                result = hLH.FNV32a(data, data:len());
-                hFile:close();
-            end
-            
-            return result;
+        buffer = function(hLH, buffer, length, init)
+            return hLH.FNV32a(buffer, length, ((type(init) == "number") and init or 0x811C9DC5));
         end;
         
-        --[[ stringFNV32a
-            note:           in AMS, call like hReturnedLH:stringFNV32a(string)
+        --[[ string - process string
+            note:           in AMS, call like hReturnedLH:string(str, init)
             @hLH:           Handle to LH module, when called as method, argument is automatically provided.
-            @szString:      The string to calculate a checksum from
+            @str:           The string to process
+            @init:          The init FNV value, defaults to 0x811C9DC5
             
-            returns:        FNV32a hash of string
+            returns:        FNV32a checksum of data
         ]]
-        stringFNV32a = function(hLH, szString)
-            return hLH.FNV32a(szString, szString:len());
+        string = function(hLH, str, init)
+            return hLH.FNV32a(str, str:len(), ((type(init) == "number") and init or 0x811C9DC5));
+        end;
+        
+        --[[ file - process file
+            note:           in AMS, call like hReturnedLH:file(filepath, init)
+            @hLH:           Handle to LH module, when called as method, argument is automatically provided.
+            @filepath:      The path to the file to check
+            @init:          The init FNV value, defaults to 0x811C9DC5
+            
+            returns:        FNV32a checksum of data
+        ]]
+        file = function(hLH, filepath, init)
+            local r = ((type(init) == "number") and init or 0x811C9DC5);
+            local f = io.open(filepath, "rb");
+            if(f)then
+                repeat 
+                    local data = f:read(2048);
+                    if(data)then
+                        local len  = data:len();
+                        r = hLH.FNV32a(data, len, r);
+                    end
+                until (not data);
+                
+                f:close();
+            end
+            
+            return r;
         end;
     };
 
@@ -91,7 +112,8 @@ return {
                 MOV         ECX, [EBP + 12] ; length
                 
                 PUSH        EBX
-                MOV         EAX, 2166136261
+                ; MOV         EAX, 2166136261 ; Init value, we're taking it from argument 3 to enable steps.
+                MOV         EAX, [EBP + 16] ; init
                 
                 fnv32a_loop:
                     MOVZX       EBX, BYTE [EDX]
