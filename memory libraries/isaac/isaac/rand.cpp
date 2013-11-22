@@ -149,11 +149,12 @@ extern "C" {
 		isaac(ctx);
 	}
 
-	ISAAC_API void isaac_seed(randctx *ctx, unsigned char seed[RANDSIZ]) { // 256
+	ISAAC_API void isaac_seed(randctx *ctx, ub4 seed[RANDSIZ]) { // 256
 		cisaac(ctx);
-		memcpy(ctx->randrsl, seed, RANDSIZ);
+		memcpy((void *)ctx->randrsl, (void *)seed, (RANDSIZ * sizeof(ub4)));
 		randinit(ctx, 1);
 	}
+
 	ISAAC_API void isaac_buff(randctx *ctx, unsigned char *buffer, unsigned long dwSize) {
 		int block = RANDSIZ;
 		int i = 0;

@@ -58,7 +58,7 @@ extern "C" {
 #endif 
 	ISAAC_API randctx * isaac_init();
 	ISAAC_API void      isaac_step(randctx *ctx);
-	ISAAC_API void      isaac_seed(randctx *ctx, unsigned char seed[RANDSIZ]); // 256
+	ISAAC_API void      isaac_seed(randctx *ctx, ub4 seed[RANDSIZ]); // 256
 	ISAAC_API void      isaac_buff(randctx *ctx, unsigned char *buffer, unsigned long dwSize);
 	ISAAC_API long      isaac_long(randctx *ctx);
 	ISAAC_API void      isaac_free(randctx *ctx);
