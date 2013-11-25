@@ -37,14 +37,6 @@
     ]=]
 ]]
 
-local br, ba = Bitwise.ASR, Bitwise.And
-
--- splitqw splits a qword into 2 dwords.
-local function splitqw(n)
-    --return br(br(n, 31), 1), ba(n, 0xFFFFFFFF);
-    return ba(n, 0xFFFFFFFF), br(br(n, 31), 1);
-end;
-
 return {
     info = {
         name            = "crc64.lh";
