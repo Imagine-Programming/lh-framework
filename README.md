@@ -10,8 +10,10 @@ Crypto
 * crypto.cipher.hide-mem (memory obfuscation)
 * crypto.util.isaac (pseudo-random number generator, cryptographic) 
 * crypto.checksum.crc32 (CRC32 using either a pre-calculated table or your own table)
+* crypto.checksum.crc64 (CRC64 using either a pre-calculated table or your own table)
 * crypto.hash.md5 (Fast MD5 module)
 * crypto.hash.md5_slow (Slower but smaller MD5 module)
+* crypto.hash.murmur-hash3 (MurmurHash3 algorithm)
 
 Utilities
 ---------
