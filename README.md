@@ -9,6 +9,7 @@ Crypto
 ------
 * crypto.cipher.hide-mem (memory obfuscation)
 * crypto.util.isaac (pseudo-random number generator, cryptographic) 
+* crypto.checksum.adler32 (Adler32 checksum)
 * crypto.checksum.crc32 (CRC32 using either a pre-calculated table or your own table)
 * crypto.checksum.crc64 (CRC64 using either a pre-calculated table or your own table)
 * crypto.hash.md5 (Fast MD5 module)
