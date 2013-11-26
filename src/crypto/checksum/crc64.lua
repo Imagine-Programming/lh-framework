@@ -245,6 +245,9 @@ return {
         CRC64 = {
             returnType = MEMEX_RETURNTYPE_QUAD;
             assembly = [=[;ASSEMBLY
+                ; original code by wilbert: http://www.purebasic.fr/english/viewtopic.php?p=431562#p431562
+                ; adapted slightly, my original code (one post above that) was slightly slower than 
+                ; his code. Speed difference was only 50 ms with 75 MiB of data, but 5 seconds with 8 GiB...
                 include '%incdir%/macro.inc'
                 
                 init32
