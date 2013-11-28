@@ -91,14 +91,16 @@ return {
             returns:        MurmurHash3 of data
         ]]
         file = function(hLH, filepath, seed)
-            local r = nil;
+            local r = ((type(seed) == "number") and seed or 0);
             local f = io.open(filepath, "rb");
             if(f)then
-                local data = f:read("*all");
-                if(data)then
-                    local len  = data:len();
-                    r = hLH.MurmurHash3(data, len, seed);
-                end
+                repeat 
+                    local data = f:read(2048);
+                    if(data)then
+                        local len  = data:len();
+                        r = hLH.MurmurHash3(data, len, r);
+                    end
+                until (not data);
                 
                 f:close();
             end
