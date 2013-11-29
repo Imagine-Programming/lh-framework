@@ -18,6 +18,7 @@ src\crypto\hash\md5_slow.lua         = build\lh-framework\lh\crypto\hash\md5_slo
 src\crypto\hash\fnv32a.lua           = build\lh-framework\lh\crypto\hash\fnv32a.lh
 src\crypto\hash\murmur-hash3.lua     = build\lh-framework\lh\crypto\hash\murmur-hash3.lh
 src\crypto\hash\joaat.lua            = build\lh-framework\lh\crypto\hash\joaat.lh
+src\crypto\util\hex.lua              = build\lh-framework\lh\crypto\util\hex.lh
 src\crypto\util\isaac.lua            = build\lh-framework\lh\crypto\util\isaac.lh
 
 src\networking\resolve.lua           = build\lh-framework\lh\networking\resolve.lh

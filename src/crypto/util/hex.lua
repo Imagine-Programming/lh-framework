@@ -37,16 +37,6 @@
     ]=]
 ]]
 
-local lstring, ubyte;
-local sformat, tonumber, tostring;
-local char;
-
-if(Application)then
-    lstring, ubyte = MemoryEx.LString, MemoryEx.UnsignedByte;
-    sformat, tonumber, tostring = string.format, tonumber, tostring;
-    char = string.char;
-end
-
 return {
     info = {
         name        = "hex.lh";
@@ -59,7 +49,7 @@ return {
     functions = {
         fromstring = function(data)
             return ({data:gsub(".", function(b)
-                return sformat("%02x", b:byte());
+                return string.format("%02x", b:byte());
             end)})[1];
         end;
         
@@ -70,15 +60,15 @@ return {
             end
             
             for i = 1, hex:len(), 2 do
-                result = result..char(tonumber("0x"..hex:sub(i, (i + 1))));
+                result = result..string.char(tonumber("0x"..hex:sub(i, (i + 1))));
             end
             
             return result;
         end;
 
         fromdata = function(data, length)
-            return ({lstring(data, length):gsub(".", function(b)
-                return sformat("%02x", b:byte());
+            return ({MemoryEx.LString(data, length):gsub(".", function(b)
+                return string.format("%02x", b:byte());
             end)})[1];
         end;
         
@@ -94,7 +84,7 @@ return {
                     return;
                 end 
                 
-                ubyte(data + i, tonumber("0x"..hex:sub(i, (i + 1))));
+                MemoryEx.UnsignedByte(data + i, tonumber("0x"..hex:sub(i, (i + 1))));
                 bi = (bi + 1);
             end
             
@@ -105,12 +95,12 @@ return {
             -- ptr is not a pointer, but an integer itself
             -- if size is not specified.
             if(not size)then
-                return sformat("%x", ptr);
+                return string.format("%x", ptr);
             end
             
             local hex = "";
             for i = (size - 1), 0, -1 do
-                hex = hex..sformat("%02x", ubyte(ptr + i))
+                hex = hex..string.format("%02x", MemoryEx.UnsignedByte(ptr + i))
             end
             
             return ({hex:gsub("^([0]+)", "")})[1];
@@ -133,7 +123,7 @@ return {
                     return;
                 end
                 
-                ubyte(ptr + qi, tonumber("0x"..hex:sub(i, (i + 1))));
+                MemoryEx.UnsignedByte(ptr + qi, tonumber("0x"..hex:sub(i, (i + 1))));
                 qi = (qi + 1);
             end
         end;
