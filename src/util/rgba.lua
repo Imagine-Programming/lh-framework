@@ -213,16 +213,10 @@ return {
         getRed = {
             assembly     = [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
                 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-                
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [ESP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 AND     EAX,        0xFF              ; The most right byte is our value
-                
-                POP     EBP
+
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -237,20 +231,14 @@ return {
 		setRed = {
 			assembly	= [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [ESP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 AND     EAX,        0xFFFFFF00        ; Remove the previous value
 
-                MOV		ECX,		[EBP + 12]        ; Move the new value to ECX
+                MOV		ECX,		[ESP + 8]         ; Move the new value to ECX
                 AND     ECX,        0xFF              ; Enforce boundaries for value
                 OR      EAX,        ECX               ; Add value to original color
 
-                POP     EBP
                 RETN
 			;ENDASSEMBLY]=];
 		};
@@ -264,17 +252,11 @@ return {
         getGreen = {
             assembly     = [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [ESP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 SHR     EAX,        8                 ; Move the color 8 bits to the right, because our value is 8 bits to the left
                 AND     EAX,        0xFF              ; The most right byte is now our value 
 
-                POP     EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -289,21 +271,15 @@ return {
 		setGreen = {
 			assembly	= [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [ESP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 AND     EAX,        0xFFFF00FF        ; Remove the previous value
 
-                MOV		ECX,		[EBP + 12]        ; Move the new value to ECX
+                MOV		ECX,		[ESP + 8]         ; Move the new value to ECX
                 AND     ECX,        0xFF              ; Enforce boundaries for value
                 SHL     ECX,        8                 ; Move the new value 8 bits to the left
                 OR      EAX,        ECX               ; Add value to original color
-
-                POP     EBP
+                
                 RETN
 			;ENDASSEMBLY]=];
 		};
@@ -317,17 +293,11 @@ return {
         getBlue = {
             assembly     = [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
                 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-                
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [ESP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 SHR     EAX,        16                ; Move the color 16 bits to the right, because our value is 16 bits to the left
                 AND     EAX,        0xFF              ; The most right byte is now our value 
-                
-                POP     EBP
+
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -342,21 +312,15 @@ return {
 		setBlue = {
 			assembly	= [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [ESP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 AND     EAX,        0xFF00FFFF        ; Remove the previous value
 
-                MOV		ECX,		[EBP + 12]        ; Move the new value to ECX
+                MOV		ECX,		[ESP + 8]         ; Move the new value to ECX
                 AND     ECX,        0xFF              ; Enforce boundaries for value
                 SHL     ECX,        16                ; Move the new value 16 bits to the left
                 OR      EAX,        ECX               ; Add value to original color
 
-                POP     EBP
                 RETN
 			;ENDASSEMBLY]=];
 		};
@@ -370,17 +334,11 @@ return {
         getAlpha = {
             assembly     = [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
                 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-                
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [ESP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 SHR     EAX,        24                ; Move the color 24 bits to the right, because our value is 24 bits to the left
                 AND     EAX,        0xFF              ; The most right byte is now our value  
                 
-                POP     EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -395,21 +353,15 @@ return {
 		setAlpha = {
 			assembly	= [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [ESP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 AND     EAX,        0x00FFFFFF        ; Remove the previous value
 
-                MOV		ECX,		[EBP + 12]        ; Move the new value to ECX
+                MOV		ECX,		[ESP + 8]         ; Move the new value to ECX
                 AND     ECX,        0xFF              ; Enforce boundaries for value
                 SHL     ECX,        24                ; Move the new value 16 bits to the left
                 OR      EAX,        ECX               ; Add value to original color
-
-                POP     EBP
+                
                 RETN
 			;ENDASSEMBLY]=];
 		};
@@ -426,42 +378,37 @@ return {
         makeRGBA = {
             assembly     = [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX - result register
                 
-                ; Can be translated as: dword result = 0;
-                
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
+                XOR     EAX,        EAX
+                ; Can be translated as: result = 0;
                 
                 ; Red - Make sure red value is 8 bits and add it to EAX
-                MOV     ECX,        [ESP + 8]         ; First argument: Red, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     ECX,        [ESP + 4]         ; First argument: Red, first argument is always at ESP + 4.
                 AND     ECX,        0xFF
                 OR      EAX,        ECX               ; Add red to our 32-bit color number
                 ; Can be translated as: result |= (red & 0xFF);
                 
                 ; Green - Make sure green value is 8 bits and add it to EAX (<< 8)
-                MOV     ECX,        [ESP + 12]        ; Second argument: Green
+                MOV     ECX,        [ESP + 8]         ; Second argument: Green
                 AND     ECX,        0xFF
                 SHL     ECX,        08
                 OR      EAX,        ECX               ; Add green to our 32-bit color number
                 ; Can be translated as: result |= ((green & 0xFF) << 8);
                 
                 ; Blue - Make sure blue value is 8 bits and add it to EAX (<< 16)
-                MOV     ECX,        [ESP + 16]        ; Third argument: Blue
+                MOV     ECX,        [ESP + 12]        ; Third argument: Blue
                 AND     ECX,        0xFF
                 SHL     ECX,        16
                 OR      EAX,        ECX               ; Add blue to our 32-bit color number
                 ; Can be translated as: result |= ((blue & 0xFF) << 16);
                 
                 ; Alpha - Make sure alpha value is 8 bits and add it to EAX (<< 8)
-                MOV     ECX,        [ESP + 20]        ; Second argument: Alpha
+                MOV     ECX,        [ESP + 16]        ; Second argument: Alpha
                 AND     ECX,        0xFF
                 SHL     ECX,        24
                 OR      EAX,        ECX               ; Add alpha to our 32-bit color number
                 ; Can be translated as: result |= ((alpha & 0xFF) << 24);
-                
-                POP     EBP
+
                 RETN ; Can be translated as: return result;
             ;ENDASSEMBLY]=];
         };
@@ -478,35 +425,30 @@ return {
             assembly     = [=[;ASSEMBLY
                 ; Exact the same as makeRGBA, but disregards the alpha channel in a color.
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX - result register
                 
-                ; Can be translated as: dword result = 0;
-                
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
+                XOR     EAX,        EAX
+                ; Can be translated as: result = 0;
                 
                 ; Red - Make sure red value is 8 bits and add it to EAX
-                MOV     ECX,        [ESP + 8]         ; First argument: Red, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     ECX,        [ESP + 4]         ; First argument: Red, first argument is always at ESP + 4.
                 AND     ECX,        0xFF
                 OR      EAX,        ECX               ; Add red to our 32-bit color number
                 ; Can be translated as: result |= (red & 0xFF);
                 
                 ; Green - Make sure green value is 8 bits and add it to EAX (<< 8)
-                MOV     ECX,        [ESP + 12]        ; Second argument: Green
+                MOV     ECX,        [ESP + 8]         ; Second argument: Green
                 AND     ECX,        0xFF
                 SHL     ECX,        08
                 OR      EAX,        ECX               ; Add green to our 32-bit color number
                 ; Can be translated as: result |= ((green & 0xFF) << 8);
                 
                 ; Blue - Make sure blue value is 8 bits and add it to EAX (<< 16)
-                MOV     ECX,        [ESP + 16]        ; Third argument: Blue
+                MOV     ECX,        [ESP + 12]        ; Third argument: Blue
                 AND     ECX,        0xFF
                 SHL     ECX,        16
                 OR      EAX,        ECX               ; Add blue to our 32-bit color number
                 ; Can be translated as: result |= ((blue & 0xFF) << 16);
                 
-                POP     EBP
                 RETN ; Can be translated as: return result;
             ;ENDASSEMBLY]=];
         };
@@ -520,16 +462,10 @@ return {
         negate = {
             assembly     = [=[;ASSEMBLY
                 USE32
-                ORG     100h                          ; Code base
-                XOR     EAX,        EAX               ; Clear EAX
                 
-                PUSH    EBP                           ; Push EBP onto the stack, we're gonna use it for arguments.
-                MOV     EBP,        ESP               ; Move ESP to EBP.
-                
-                MOV     EAX,        [EBP + 8]         ; Move the color to EAX, first argument is always at EBP + 8 when ESP is moved to EBP.
+                MOV     EAX,        [EBP + 4]         ; Move the color to EAX, first argument is always at ESP + 4.
                 XOR     EAX,        0xFFFFFF          ; Negate the RGB values and leave the Alpha intact, if present.
                 
-                POP     EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
