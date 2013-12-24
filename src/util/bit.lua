@@ -49,16 +49,11 @@ return {
         bshl = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                MOV             ECX, [EBP + 12]
+                MOV             EAX, [ESP + 4]
+                MOV             ECX, [ESP + 8]
                 SHL             EAX, CL
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -66,16 +61,11 @@ return {
         bshr = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                MOV             ECX, [EBP + 12]
+                MOV             EAX, [ESP + 4]
+                MOV             ECX, [ESP + 8]
                 SHR             EAX, CL
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -84,16 +74,11 @@ return {
         band = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                MOV             ECX, [EBP + 12]
+                MOV             EAX, [ESP + 4]
+                MOV             ECX, [ESP + 8]
                 AND             EAX, ECX
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -102,16 +87,11 @@ return {
         bor = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                MOV             ECX, [EBP + 12]
+                MOV             EAX, [ESP + 4]
+                MOV             ECX, [ESP + 8]
                 OR              EAX, ECX
-                
-                POP             EBP
+
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -119,16 +99,11 @@ return {
         bxor = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                MOV             ECX, [EBP + 12]
+                MOV             EAX, [ESP + 4]
+                MOV             ECX, [ESP + 8]
                 XOR             EAX, ECX
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -137,15 +112,10 @@ return {
         bnot = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 NOT             EAX
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -154,16 +124,11 @@ return {
         brol = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                MOV             ECX, [EBP + 12]
+                MOV             EAX, [ESP + 4]
+                MOV             ECX, [ESP + 8]
                 ROL             EAX, CL
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         }; 
@@ -171,16 +136,11 @@ return {
         bror = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                MOV             ECX, [EBP + 12]
+                MOV             EAX, [ESP + 4]
+                MOV             ECX, [ESP + 8]
                 ROR             EAX, CL
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         }; 
@@ -189,15 +149,10 @@ return {
         badd = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
+                MOV             EAX, [ESP + 4]
+                ADD             EAX, [ESP + 8]
                 
-                MOV             EAX, [EBP + 8]
-                ADD             EAX, [EBP + 12]
-                
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -205,16 +160,11 @@ return {
         badd3 = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
+                MOV             EAX, [ESP + 4]
+                ADD             EAX, [ESP + 8]
+                ADD             EAX, [ESP + 12]
                 
-                MOV             EAX, [EBP + 8]
-                ADD             EAX, [EBP + 12]
-                ADD             EAX, [EBP + 16]
-                
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -222,17 +172,12 @@ return {
         badd4 = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
+                MOV             EAX, [ESP + 4]
+                ADD             EAX, [ESP + 8]
+                ADD             EAX, [ESP + 12]
+                ADD             EAX, [ESP + 16]
                 
-                MOV             EAX, [EBP + 8]
-                ADD             EAX, [EBP + 12]
-                ADD             EAX, [EBP + 16]
-                ADD             EAX, [EBP + 20]
-                
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -240,18 +185,13 @@ return {
         badd5 = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
+                MOV             EAX, [ESP + 4]
+                ADD             EAX, [ESP + 8]
+                ADD             EAX, [ESP + 12]
+                ADD             EAX, [ESP + 16]
+                ADD             EAX, [ESP + 20]
                 
-                MOV             EAX, [EBP + 8]
-                ADD             EAX, [EBP + 12]
-                ADD             EAX, [EBP + 16]
-                ADD             EAX, [EBP + 20]
-                ADD             EAX, [EBP + 24]
-                
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -260,32 +200,10 @@ return {
         bsub = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                SUB             EAX, [EBP + 12]
-                
-                POP             EBP
-                RETN
-            ;ENDASSEMBLY]=];
-        };
+                MOV             EAX, [ESP + 4]
+                SUB             EAX, [ESP + 8]
 
-        bsub2 = {
-            assembly = [=[;ASSEMBLY
-                USE32
-                ORG             100h
-                
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                SUB             EAX, [EBP + 12]
-                SUB             EAX, [EBP + 16]
-                
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -293,17 +211,11 @@ return {
         bsub3 = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                SUB             EAX, [EBP + 12]
-                SUB             EAX, [EBP + 16]
-                SUB             EAX, [EBP + 20]
-                
-                POP             EBP
+                MOV             EAX, [ESP + 4]
+                SUB             EAX, [ESP + 8]
+                SUB             EAX, [ESP + 12]
+
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -311,18 +223,12 @@ return {
         bsub4 = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                SUB             EAX, [EBP + 12]
-                SUB             EAX, [EBP + 16]
-                SUB             EAX, [EBP + 20]
-                SUB             EAX, [EBP + 24]
-                
-                POP             EBP
+                MOV             EAX, [ESP + 4]
+                SUB             EAX, [ESP + 8]
+                SUB             EAX, [ESP + 12]
+                SUB             EAX, [ESP + 16]
+
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -330,19 +236,13 @@ return {
         bsub5 = {
             assembly = [=[;ASSEMBLY
                 USE32
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
-                SUB             EAX, [EBP + 12]
-                SUB             EAX, [EBP + 16]
-                SUB             EAX, [EBP + 20]
-                SUB             EAX, [EBP + 24]
-                SUB             EAX, [EBP + 28]
-                
-                POP             EBP
+                MOV             EAX, [ESP + 4]
+                SUB             EAX, [ESP + 8]
+                SUB             EAX, [ESP + 12]
+                SUB             EAX, [ESP + 16]
+                SUB             EAX, [ESP + 20]
+
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -351,15 +251,10 @@ return {
         bbound4 = {
             assembly = [=[;ASSEMBLY
                 USE32  
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 AND             EAX, 0xF
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -367,15 +262,10 @@ return {
         bbound8 = {
             assembly = [=[;ASSEMBLY
                 USE32  
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 AND             EAX, 0xFF
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -383,15 +273,10 @@ return {
         bbound12 = {
             assembly = [=[;ASSEMBLY
                 USE32  
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 AND             EAX, 0xFFF
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -399,15 +284,10 @@ return {
         bbound16 = {
             assembly = [=[;ASSEMBLY
                 USE32  
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 AND             EAX, 0xFFFF
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -415,15 +295,10 @@ return {
         bbound20 = {
             assembly = [=[;ASSEMBLY
                 USE32  
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 AND             EAX, 0xFFFFF
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -431,15 +306,10 @@ return {
         bbound24 = {
             assembly = [=[;ASSEMBLY
                 USE32  
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 AND             EAX, 0xFFFFFF
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -447,15 +317,10 @@ return {
         bbound28 = {
             assembly = [=[;ASSEMBLY
                 USE32  
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 AND             EAX, 0xFFFFFFF
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
@@ -463,15 +328,10 @@ return {
         bbound32 = {
             assembly = [=[;ASSEMBLY
                 USE32  
-                ORG             100h
                 
-                PUSH            EBP
-                MOV             EBP, ESP
-                
-                MOV             EAX, [EBP + 8]
+                MOV             EAX, [ESP + 4]
                 AND             EAX, 0xFFFFFFFF
                 
-                POP             EBP
                 RETN
             ;ENDASSEMBLY]=];
         };
