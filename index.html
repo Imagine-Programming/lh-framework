@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Lh-framework by Imagine-Programming</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Lh-framework</h1>
+        <h2>A framework of MX LH modules for networking, data processing, api integration and more.</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/Imagine-Programming/lh-framework/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/Imagine-Programming/lh-framework/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/Imagine-Programming/lh-framework" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1>
+<a name="lh-framework" class="anchor" href="#lh-framework"><span class="octicon octicon-link"></span></a>lh-framework</h1>
+
+<p>A framework of MX LH modules for networking, data processing, api integration and more.</p>
+
+<p>The following modules are currently implemented:</p>
+
+<h2>
+<a name="crypto" class="anchor" href="#crypto"><span class="octicon octicon-link"></span></a>Crypto</h2>
+
+<ul>
+<li>crypto.cipher.hide-mem (memory obfuscation)</li>
+<li>crypto.util.isaac (pseudo-random number generator, cryptographic) </li>
+<li>crypto.checksum.adler32 (Adler32 checksum)</li>
+<li>crypto.checksum.crc32 (CRC32 using either a pre-calculated table or your own table)</li>
+<li>crypto.checksum.crc64 (CRC64 using either a pre-calculated table or your own table)</li>
+<li>crypto.hash.md5 (Fast MD5 module)</li>
+<li>crypto.hash.md5_slow (Slower but smaller MD5 module)</li>
+<li>crypto.hash.murmur-hash3 (MurmurHash3 algorithm)</li>
+</ul><h2>
+<a name="utilities" class="anchor" href="#utilities"><span class="octicon octicon-link"></span></a>Utilities</h2>
+
+<ul>
+<li>util.rgba (RGB and RGBA calculations, working with hexadecimal colors and negation) </li>
+<li>util.bit (32-bit calculations, such as shifts, logical ops, rotates, bounds and addition/subtractions) </li>
+</ul><h2>
+<a name="networking" class="anchor" href="#networking"><span class="octicon octicon-link"></span></a>Networking</h2>
+
+<ul>
+<li>networking.resolve (Resolve hostnames and IP addresses, both IPv4 and IPv6 supported)</li>
+</ul><h2>
+<a name="imxlh-version" class="anchor" href="#imxlh-version"><span class="octicon octicon-link"></span></a>IMXLH Version</h2>
+
+<p>This code requires <strong><a href="http://www.memoryex.net/imxlh.html" title="IMXLH">Imagine MemoryEx LH Compiler 1.2</a></strong> or any version greater than that.<br>
+Aside from that, <strong><a href="http://www.memoryex.net/mx.html" title="MX">MemoryEx 2.2</a></strong> or greater is required to be able to load the produced LH modules.</p>
+
+<h2>
+<a name="compile" class="anchor" href="#compile"><span class="octicon octicon-link"></span></a>Compile</h2>
+
+<p>Compilation is easy, just run build.bat. When you want to add more modules to this framework,<br>
+simply add each source to the makefile.lhm and make sure they build in build/lh-framework/lh/*.</p>
+
+<p>If you don't do this, the updatemain tool will not generate an index of those modules and the<br>
+CRC32 fingerprint required in main.lh will be lost.</p>
+
+<h2>
+<a name="compile-memory-libraries" class="anchor" href="#compile-memory-libraries"><span class="octicon octicon-link"></span></a>Compile Memory Libraries</h2>
+
+<p>The LH framework comes with the source code for the used memory libraries, such as ISAAC and 
+libmd5. We have developed these libraries based on existing code, or solely based on the 
+published algorithm. All these sources fall under the MIT license, however are public 
+domain code.</p>
+
+<p>Compile these libraries using VC++ 2013.</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
